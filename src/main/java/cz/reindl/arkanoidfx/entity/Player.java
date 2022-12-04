@@ -4,9 +4,12 @@ import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.util.Random;
+
 public class Player extends GameObject {
 
     private int score, lives, velocityX;
+    private String[] skins = new String[3];
 
     public Player(double x, double y, int score, int lives, int velocityX) {
         super(x, y);
@@ -16,11 +19,18 @@ public class Player extends GameObject {
         initPlatformObjectImage();
     }
 
+    public String getSkin() {
+        skins[0] = "platform.png";
+        skins[1] = "platformBetter.png";
+        skins[2] = "platformBetterWide.png";
+        return skins[new Random().nextInt(3)];
+    }
+
     private void initPlatformObjectImage() {
         loadSourceImage("platformBetter.png");
         getImageSize();
-        this.height = 20;
-        this.width = 100;
+        //this.height = 20;
+        //this.width = 140;
     }
 
     public void keyPressed(KeyEvent event) {

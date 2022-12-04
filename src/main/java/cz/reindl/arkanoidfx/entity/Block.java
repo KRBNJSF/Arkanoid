@@ -4,8 +4,7 @@ public class Block extends GameObject {
 
     private int score, lives;
 
-    public Block(int x, int y) {
-        super(x, y);
+    public Block() {
         score = 0;
         lives = 3;
         initBlockObjectImage();

@@ -16,6 +16,9 @@ public abstract class GameObject {
         this.y = y;
     }
 
+    protected GameObject() {
+    }
+
     public void loadSourceImage(String imgSrc) {
         this.image = new Image(imgSrc);
         this.imgSrc = imgSrc;

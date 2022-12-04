@@ -28,7 +28,7 @@ public class EventHandler {
         player.setX(Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2);
         player.setY(Settings.SCREEN_HEIGHT - player.getWidth() / 2);
 
-        ball = new Ball(0, 0, 0, -5);
+        ball = new Ball(0, 0, 0, -7);
         ball.setX(player.getX() + player.getWidth() / 2 - ball.getWidth() / 2);
         ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 5) - ball.getHeight() / 3);
 
@@ -37,13 +37,13 @@ public class EventHandler {
         int iterations = 0;
 
         for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-            blocks.add(new Block(0, 0));
+            blocks.add(new Block());
         }
 
-        for (int y = 0; y < 5; y++) {
-            for (int x = 0; x < 5; x++) {
-                blocks.get(iterations).setX(x + blocks.get(iterations).getWidth());
-                blocks.get(iterations).setY(y + blocks.get(iterations).getHeight());
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
                 iterations++;
             }
         }
@@ -81,6 +81,9 @@ public class EventHandler {
             ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
             ball.setX(Settings.DEFAULT_BALL_X);
             ball.setY(Settings.DEFAULT_BALL_Y);
+            player.loadSourceImage(player.getSkin());
+            player.setWidth((int) player.getImage().getWidth());
+            player.setHeight((int) player.getImage().getHeight());
 
             player.setX(Settings.DEFAULT_PLAYER_X);
             Robot robot = new Robot();
@@ -97,26 +100,30 @@ public class EventHandler {
 
     public void checkCollision() {
         if (ball.getRect().intersects(player.getRect().getBoundsInParent())) {
-            if (ball.getRect().getX() + ball.getWidth() <= player.getPlayerRect(player.getWidth() / 3)) {
+
+            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 3)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(-2);
+                ball.setVelocityX(-4);
                 if (ball.getVelocityX() >= 0) {
                     ball.setVelocityX(ball.getVelocityX() * -1);
                 }
             }
+
             if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.5) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 3)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
                 //ball.setVelocityX(-5);
                 ball.setVelocityX(0);
             }
+
             if (ball.getBallRect() <= player.getPlayerRect(player.getWidth()) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 1.5)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
-                //ball.setVelocityX(5);
+                ball.setVelocityX(4);
                 if (ball.getVelocityX() <= 0) {
-                    ball.setVelocityX(-2);
+                    ball.setVelocityX(-4);
                     ball.setVelocityX(ball.getVelocityX() * -1);
                 }
             }
+
         }
     }
 
@@ -128,18 +135,24 @@ public class EventHandler {
                 if (block.getLives() == 3) {
                     block.setLives(2);
                     block.loadSourceImage("damagedBlock.png");
-                } else if (block.getLives() == 2) {
+                    ball.setVelocityY(ball.getVelocityY() * -1);
+                    return;
+                }
+                if (block.getLives() == 2) {
                     block.setLives(1);
                     block.loadSourceImage("brokenBlock.png");
-                } else {
+                    ball.setVelocityY(ball.getVelocityY() * -1);
+                    return;
+                }
+                if (block.getLives() == 1) {
                     block.setLives(0);
                     block.loadSourceImage("invisBlock.png");
+                    ball.setVelocityY(ball.getVelocityY() * -1);
+                    return;
                 }
-                ball.setVelocityY(ball.getVelocityY() * -1);
+                //ball.setVelocityY(ball.getVelocityY() * -1);
+                // FIXME: 04.12.2022 Percentage collision change
                 //ball.setVelocityX(-5);
-                if (ball.getVelocityX() > 0) {
-                    ball.setVelocityX(ball.getVelocityX() * -1);
-                }
             }
         }
 

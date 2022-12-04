@@ -1,5 +1,6 @@
 package cz.reindl.arkanoidfx.view;
 
+import cz.reindl.arkanoidfx.entity.Block;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.event.EventHandler;
 import javafx.animation.KeyFrame;
@@ -101,14 +102,23 @@ public class GameView extends Application implements Initializable {
         //gc.setFill(Color.BLACK);
         //gc.setFont(Font.font(40));
 
-        int timer = 1;
-        for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
+        int iterations = 0;
+        /*for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
+            gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + i * handler.blocks.get(i).getWidth() - 100, handler.blocks.get(i).getHeight());
             if (i * handler.blocks.get(i).getWidth() <= Settings.SCREEN_WIDTH / 2) {
-                gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + i * handler.blocks.get(i).getWidth() - 100, handler.blocks.get(i).getHeight() /* * i*/);
+                gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + i * handler.blocks.get(i).getWidth() - 100, handler.blocks.get(i).getHeight() * i);
+            } else if (i * handler.blocks.get(i).getWidth() >= Settings.SCREEN_WIDTH / 2) {
+                iterations++;
             } else {
-                timer++;
                 handler.blocks.get(i).setX(50);
-                gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + timer * handler.blocks.get(i).getWidth(), timer * handler.blocks.get(i).getHeight() + 10 /* * i*/);
+                gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + iterations * handler.blocks.get(i).getWidth(), iterations * handler.blocks.get(i).getHeight() + 10 * i);
+            }
+        }*/
+
+        for (int y = 0; y < 6; y++) {
+            for (int x = 0; x < 6; x++) {
+                gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
+                iterations++;
             }
         }
 
