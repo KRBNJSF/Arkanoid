@@ -11,7 +11,7 @@ public class Block extends GameObject {
     }
 
     private void initBlockObjectImage() {
-        loadSourceImage("healthyBlock.png");
+        loadSourceImage(BlockState.HEALTHY.getImgSrc());
         getImageSize();
     }
 

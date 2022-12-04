@@ -4,7 +4,8 @@ public enum BlockState {
 
     HEALTHY("healthyBlock.png"),
     DAMAGED("damagedBlock.png"),
-    BROKEN("brokenBlock.png");
+    BROKEN("brokenBlock.png"),
+    INVISIBLE("invisBlock.png");
 
     private String imgSrc;
 

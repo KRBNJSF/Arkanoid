@@ -2,6 +2,7 @@ package cz.reindl.arkanoidfx.event;
 
 import cz.reindl.arkanoidfx.entity.Ball;
 import cz.reindl.arkanoidfx.entity.Block;
+import cz.reindl.arkanoidfx.entity.BlockState;
 import cz.reindl.arkanoidfx.entity.Player;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.view.GameView;
@@ -134,19 +135,19 @@ public class EventHandler {
                 System.out.println(player.getScore() + ": " + block.getX());
                 if (block.getLives() == 3) {
                     block.setLives(2);
-                    block.loadSourceImage("damagedBlock.png");
+                    block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
                     return;
                 }
                 if (block.getLives() == 2) {
                     block.setLives(1);
-                    block.loadSourceImage("brokenBlock.png");
+                    block.loadSourceImage(BlockState.BROKEN.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
                     return;
                 }
                 if (block.getLives() == 1) {
                     block.setLives(0);
-                    block.loadSourceImage("invisBlock.png");
+                    block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
                     return;
                 }
