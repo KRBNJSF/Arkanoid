@@ -99,7 +99,7 @@ public class EventHandler {
         if (ball.getRect().intersects(player.getRect().getBoundsInParent())) {
             if (ball.getRect().getX() + ball.getWidth() <= player.getPlayerRect(player.getWidth() / 3)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(-4);
+                ball.setVelocityX(-2);
                 if (ball.getVelocityX() >= 0) {
                     ball.setVelocityX(ball.getVelocityX() * -1);
                 }
@@ -113,7 +113,7 @@ public class EventHandler {
                 ball.setVelocityY(ball.getVelocityY() * -1);
                 //ball.setVelocityX(5);
                 if (ball.getVelocityX() <= 0) {
-                    ball.setVelocityX(-4);
+                    ball.setVelocityX(-2);
                     ball.setVelocityX(ball.getVelocityX() * -1);
                 }
             }

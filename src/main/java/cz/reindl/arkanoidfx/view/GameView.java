@@ -13,6 +13,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
@@ -66,7 +67,9 @@ public class GameView extends Application implements Initializable {
             }
         });
         canvas.setOnMouseClicked(l -> {
-            isRunning = true;
+            if (l.getButton() == MouseButton.PRIMARY) {
+                isRunning = true;
+            }
         });
         canvas.setOnKeyPressed(event -> handler.player.keyPressed(event));
         canvas.setOnKeyReleased(event -> handler.player.keyReleased(event));
