@@ -36,6 +36,7 @@ public class GameView extends Application implements Initializable {
     private EventHandler handler;
     public boolean isRunning;
     public boolean isWin;
+    public int lastScore = 0;
     GraphicsContext gc;
     Canvas canvas;
 
@@ -72,6 +73,7 @@ public class GameView extends Application implements Initializable {
             if (l.getButton() == MouseButton.PRIMARY) {
                 isWin = false;
                 isRunning = true;
+                lastScore = 0;
             }
         });
         canvas.setOnKeyPressed(event -> handler.player.keyPressed(event));
@@ -144,7 +146,7 @@ public class GameView extends Application implements Initializable {
         if (isWin) {
             gc.setStroke(Color.BLACK);
             gc.setTextAlign(TextAlignment.CENTER);
-            gc.strokeText("You won", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+            gc.strokeText("You won \n Score: " + lastScore, Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
             handler.gameWin();
         }
         gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());

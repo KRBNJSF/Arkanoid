@@ -78,17 +78,18 @@ public class EventHandler {
 
     public void resetValues() {
         if (reset) {
+            view.lastScore = player.getScore();
             view.isRunning = false;
             player.loadSourceImage(player.getSkin());
             player.setWidth((int) player.getImage().getWidth());
             player.setHeight((int) player.getImage().getHeight());
+            player.setX(Settings.DEFAULT_PLAYER_X);
 
             ball.setVelocityX(Settings.DEFAULT_BALL_VELOCITY_X);
             ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
             ball.setX(Settings.DEFAULT_BALL_X);
             ball.setY(Settings.DEFAULT_BALL_Y);
 
-            player.setX(Settings.DEFAULT_PLAYER_X);
             Robot robot = new Robot();
             robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
             player.setScore(0);
