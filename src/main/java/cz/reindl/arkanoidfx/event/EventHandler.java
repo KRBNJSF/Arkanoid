@@ -18,6 +18,7 @@ public class EventHandler {
     public Ball ball;
     public ArrayList<Block> blocks;
     public boolean reset;
+    public int lives = Settings.NUMBER_OF_BLOCKS;
 
     public EventHandler(GameView view) {
         this.view = view;
@@ -78,21 +79,25 @@ public class EventHandler {
     public void resetValues() {
         if (reset) {
             view.isRunning = false;
+            player.loadSourceImage(player.getSkin());
+            player.setWidth((int) player.getImage().getWidth());
+            player.setHeight((int) player.getImage().getHeight());
+
             ball.setVelocityX(Settings.DEFAULT_BALL_VELOCITY_X);
             ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
             ball.setX(Settings.DEFAULT_BALL_X);
             ball.setY(Settings.DEFAULT_BALL_Y);
-            player.loadSourceImage(player.getSkin());
-            player.setWidth((int) player.getImage().getWidth());
-            player.setHeight((int) player.getImage().getHeight());
 
             player.setX(Settings.DEFAULT_PLAYER_X);
             Robot robot = new Robot();
             robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
             player.setScore(0);
             player.setLives(Settings.DEFAULT_PLAYER_LIVES);
+
+            lives = Settings.NUMBER_OF_BLOCKS;
             for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
                 blocks.get(i).setLives(Settings.DEFAULT_PLAYER_LIVES);
+                blocks.get(i).setAlive(true);
                 blocks.get(i).loadSourceImage(Settings.DEFAULT_BLOCK_IMG);
             }
             reset = false;
@@ -130,7 +135,7 @@ public class EventHandler {
 
     public void checkBlockCollision() {
         for (Block block : blocks) {
-            if (ball.getRect().intersects(block.getRect().getBoundsInParent()) && block.getLives() > 0) {
+            if (ball.getRect().intersects(block.getRect().getBoundsInParent()) && block.getLives() > 0 && block.isAlive()) {
                 addToScore();
                 System.out.println(player.getScore() + ": " + block.getX());
                 if (block.getLives() == 3) {
@@ -163,4 +168,23 @@ public class EventHandler {
         player.setScore(player.getScore() + 100);
     }
 
+    public void checkBlockState() {
+        if (lives <= 0) {
+            view.isWin = true;
+        }
+        for (int i = 0; i < blocks.size(); i++) {
+            if (blocks.get(i).getLives() == 0 && blocks.get(i).isAlive()) {
+                blocks.get(i).setAlive(false);
+                lives--;
+            }
+        }
+    }
+
+    public void gameWin() {
+        view.isRunning = false;
+        if (player.getScore() > 0) {
+            reset = true;
+        }
+        resetValues();
+    }
 }

@@ -35,6 +35,7 @@ public class GameView extends Application implements Initializable {
     private Rectangle2D screenSize;
     private EventHandler handler;
     public boolean isRunning;
+    public boolean isWin;
     GraphicsContext gc;
     Canvas canvas;
 
@@ -69,6 +70,7 @@ public class GameView extends Application implements Initializable {
         });
         canvas.setOnMouseClicked(l -> {
             if (l.getButton() == MouseButton.PRIMARY) {
+                isWin = false;
                 isRunning = true;
             }
         });
@@ -83,6 +85,11 @@ public class GameView extends Application implements Initializable {
                 stage.close();
                 isRunning = false;
                 System.exit(0);
+            }
+            if (keyEvent.getCode() == KeyCode.R) {
+                isRunning = false;
+                handler.reset = true;
+                handler.resetValues();
             }
         });
 
@@ -127,21 +134,24 @@ public class GameView extends Application implements Initializable {
         if (isRunning) {
             handler.moveBall();
             handler.checkCollision();
+            handler.checkBlockState();
             handler.checkBlockCollision();
-        } else {
+        } else if (!isWin) {
             gc.setStroke(Color.BLACK);
             gc.setTextAlign(TextAlignment.CENTER);
             gc.strokeText("Click to Start", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+        }
+        if (isWin) {
+            gc.setStroke(Color.BLACK);
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.strokeText("You won", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+            handler.gameWin();
         }
         gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
         gc.setStroke(Color.BLACK);
         gc.setTextAlign(TextAlignment.CENTER);
         //gc.setFont(Font.font(text.getText(), 40));
         gc.strokeText(text.getText() + String.valueOf(handler.player.getScore()), 70, 60);
-    }
-
-    private void gameWin() {
-        isRunning = false;
     }
 
     @Override

@@ -4,9 +4,12 @@ public class Block extends GameObject {
 
     private int score, lives;
 
+    private boolean isAlive;
+
     public Block() {
         score = 0;
         lives = 3;
+        isAlive = true;
         initBlockObjectImage();
     }
 
@@ -30,4 +33,13 @@ public class Block extends GameObject {
     public void setLives(int lives) {
         this.lives = lives;
     }
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+    public void setAlive(boolean alive) {
+        isAlive = alive;
+    }
+
 }
