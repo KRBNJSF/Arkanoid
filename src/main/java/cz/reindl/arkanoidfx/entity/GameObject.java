@@ -4,12 +4,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Random;
+
 public abstract class GameObject {
     protected int width, height;
     protected double x, y;
     protected Image image;
     protected ImageView imageView;
     protected String imgSrc;
+    protected String[] skins = new String[3];
 
     public GameObject(double x, double y) {
         this.x = x;
@@ -28,6 +31,10 @@ public abstract class GameObject {
     protected void getImageSize() {
         this.width = (int) image.getWidth();
         this.height = (int) image.getHeight();
+    }
+
+    protected String getSkin(int bound) {
+        return skins[new Random().nextInt(bound)];
     }
 
     public Rectangle getRect() {

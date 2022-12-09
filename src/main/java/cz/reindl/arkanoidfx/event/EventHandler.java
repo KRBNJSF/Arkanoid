@@ -10,6 +10,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.robot.Robot;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class EventHandler {
 
@@ -26,13 +27,13 @@ public class EventHandler {
     }
 
     private void initGameObjects() {
-        player = new Player(0, 0, 0, 2, 5);
+        player = new Player(0, 2, 5);
         player.setX(Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2);
         player.setY(Settings.SCREEN_HEIGHT - player.getWidth() / 2);
 
-        ball = new Ball(0, 0, 0, -7);
+        ball = new Ball(0, -7);
         ball.setX(player.getX() + player.getWidth() / 2 - ball.getWidth() / 2);
-        ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 5) - ball.getHeight() / 3);
+        ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3);
 
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
 
@@ -52,14 +53,17 @@ public class EventHandler {
 
         //DEFAULT Settings
         Settings.DEFAULT_BALL_X = player.getX() + player.getWidth() / 2 - ball.getWidth() / 2; //ball.getX();
-        Settings.DEFAULT_BALL_Y = Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight()) - ball.getHeight() / 3; //ball.getY();
+        Settings.DEFAULT_BALL_Y = Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3; //ball.getY();
         Settings.DEFAULT_PLAYER_X = Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2; //player.getX();
     }
 
     public void moveBall() {
-        if (ball.getY() >= Settings.SCREEN_HEIGHT) {
+        if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
+            player.setLives(player.getLives() - 1);
             reset = true;
             resetValues();
+        } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
+            resetBall();
         }
         if (ball.getX() + ball.getWidth() >= Settings.SCREEN_WIDTH) {
             ball.setVelocityX(ball.getVelocityX() * -1);
@@ -68,6 +72,7 @@ public class EventHandler {
             ball.setVelocityX(ball.getVelocityX() * -1);
         }
         if (ball.getY() <= 0) {
+            ball.setY(10);
             ball.setVelocityY(ball.getVelocityY() * -1);
         } else {
             ball.setVelocityX(ball.getVelocityX());
@@ -80,18 +85,14 @@ public class EventHandler {
         if (reset) {
             view.lastScore = player.getScore();
             view.isRunning = false;
-            player.loadSourceImage(player.getSkin());
+            player.loadSourceImage(player.getSkin(3));
             player.setWidth((int) player.getImage().getWidth());
             player.setHeight((int) player.getImage().getHeight());
             player.setX(Settings.DEFAULT_PLAYER_X);
 
-            ball.setVelocityX(Settings.DEFAULT_BALL_VELOCITY_X);
-            ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
-            ball.setX(Settings.DEFAULT_BALL_X);
-            ball.setY(Settings.DEFAULT_BALL_Y);
+            ball.loadSourceImage(ball.getSkin(3));
+            resetBall();
 
-            Robot robot = new Robot();
-            robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
             player.setScore(0);
             player.setLives(Settings.DEFAULT_PLAYER_LIVES);
 
@@ -105,28 +106,55 @@ public class EventHandler {
         }
     }
 
-    public void checkCollision() {
+    public void resetBall() {
+        view.isRunning = false;
+        ball.setVelocityX(Settings.DEFAULT_BALL_VELOCITY_X);
+        ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
+        ball.setX(Settings.DEFAULT_BALL_X);
+        ball.setY(Settings.DEFAULT_BALL_Y);
+
+        Robot robot = new Robot();
+        robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
+    }
+
+    public void checkBallCollision() {
         if (ball.getRect().intersects(player.getRect().getBoundsInParent())) {
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 3)) {
+            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 5)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(-4);
+                ball.setVelocityX(-6);
                 if (ball.getVelocityX() >= 0) {
                     ball.setVelocityX(ball.getVelocityX() * -1);
                 }
             }
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.5) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 3)) {
+            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 2.5) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 5)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
-                //ball.setVelocityX(-5);
-                ball.setVelocityX(0);
+                ball.setVelocityX(-3);
+                if (ball.getVelocityX() >= 0) {
+                    ball.setVelocityX(ball.getVelocityX() * -1);
+                }
             }
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth()) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 1.5)) {
+            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.66) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 2.5)) {
+                ball.setVelocityY(ball.getVelocityY() * -1);
+                ball.setVelocityX(new Random().nextInt(3) - 1);
+            }
+
+            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.25) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 1.66)) {
                 ball.setVelocityY(ball.getVelocityY() * -1);
                 ball.setVelocityX(4);
                 if (ball.getVelocityX() <= 0) {
                     ball.setVelocityX(-4);
+                    ball.setVelocityX(ball.getVelocityX() * -1);
+                }
+            }
+
+            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth()) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 1.25)) {
+                ball.setVelocityY(ball.getVelocityY() * -1);
+                ball.setVelocityX(6);
+                if (ball.getVelocityX() <= 0) {
+                    ball.setVelocityX(-6);
                     ball.setVelocityX(ball.getVelocityX() * -1);
                 }
             }

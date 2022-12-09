@@ -9,28 +9,25 @@ import java.util.Random;
 public class Player extends GameObject {
 
     private int score, lives, velocityX;
-    private String[] skins = new String[3];
 
-    public Player(double x, double y, int score, int lives, int velocityX) {
-        super(x, y);
+    public Player(int score, int lives, int velocityX) {
+        super();
         this.score = score;
         this.lives = lives;
         this.velocityX = velocityX;
         initPlatformObjectImage();
     }
 
-    public String getSkin() {
+    public String getSkin(int bound) {
         skins[0] = "platform.png";
         skins[1] = "platformBetter.png";
         skins[2] = "platformBetterWide.png";
-        return skins[new Random().nextInt(3)];
+        return skins[new Random().nextInt(bound)];
     }
 
     private void initPlatformObjectImage() {
         loadSourceImage("platformBetter.png");
         getImageSize();
-        //this.height = 20;
-        //this.width = 140;
     }
 
     public void keyPressed(KeyEvent event) {

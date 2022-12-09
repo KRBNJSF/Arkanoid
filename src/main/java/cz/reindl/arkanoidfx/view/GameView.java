@@ -1,6 +1,5 @@
 package cz.reindl.arkanoidfx.view;
 
-import cz.reindl.arkanoidfx.entity.Block;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.event.EventHandler;
 import javafx.animation.KeyFrame;
@@ -17,7 +16,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.robot.Robot;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.Text;
@@ -76,9 +74,9 @@ public class GameView extends Application implements Initializable {
                 lastScore = 0;
             }
         });
+        canvas.requestFocus();
         canvas.setOnKeyPressed(event -> handler.player.keyPressed(event));
         canvas.setOnKeyReleased(event -> handler.player.keyReleased(event));
-        canvas.requestFocus();
 
         Scene scene = new Scene(new Pane(canvas));
         scene.setCursor(Cursor.NONE);
@@ -135,13 +133,18 @@ public class GameView extends Application implements Initializable {
 
         if (isRunning) {
             handler.moveBall();
-            handler.checkCollision();
+            handler.checkBallCollision();
             handler.checkBlockState();
             handler.checkBlockCollision();
         } else if (!isWin) {
             gc.setStroke(Color.BLACK);
             gc.setTextAlign(TextAlignment.CENTER);
             gc.strokeText("Click to Start", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+        }
+        if(handler.player.getLives() >0) {
+            gc.setStroke(Color.BLACK);
+            gc.setTextAlign(TextAlignment.CENTER);
+            gc.strokeText(String.valueOf(handler.player.getLives()), Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
         if (isWin) {
             gc.setStroke(Color.BLACK);

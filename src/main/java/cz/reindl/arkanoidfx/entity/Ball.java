@@ -1,11 +1,13 @@
 package cz.reindl.arkanoidfx.entity;
 
+import java.util.Random;
+
 public class Ball extends GameObject {
 
     private int velocityX, velocityY;
 
-    public Ball(double x, double y, int velocityX, int velocityY) {
-        super(x, y);
+    public Ball(int velocityX, int velocityY) {
+        super();
         this.velocityX = velocityX;
         this.velocityY = velocityY;
         initBallObjectImage();
@@ -14,8 +16,13 @@ public class Ball extends GameObject {
     private void initBallObjectImage() {
         loadSourceImage("ball.png");
         getImageSize();
-        this.width = 20;
-        this.height = 20;
+    }
+
+    public String getSkin(int bound) {
+        skins[0] = "ball.png";
+        skins[1] = "ball2.png";
+        skins[2] = "ball3.png";
+        return skins[new Random().nextInt(bound)];
     }
 
     public double getBallRect() {
