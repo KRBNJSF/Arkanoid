@@ -6,7 +6,6 @@ import cz.reindl.arkanoidfx.entity.BlockState;
 import cz.reindl.arkanoidfx.entity.Player;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.view.GameView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.robot.Robot;
 
 import java.util.ArrayList;
@@ -20,6 +19,8 @@ public class EventHandler {
     public ArrayList<Block> blocks;
     public boolean reset;
     public int lives = Settings.NUMBER_OF_BLOCKS;
+    public int allWidth = 0;
+    public int allHeight = 0;
 
     public EventHandler(GameView view) {
         this.view = view;
@@ -27,7 +28,7 @@ public class EventHandler {
     }
 
     private void initGameObjects() {
-        player = new Player(0, 2, 5);
+        player = new Player(Settings.DEFAULT_SCORE, Settings.DEFAULT_PLAYER_LIVES, 5);
         player.setX(Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2);
         player.setY(Settings.SCREEN_HEIGHT - player.getWidth() / 2);
 
@@ -36,20 +37,23 @@ public class EventHandler {
         ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3);
 
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
+        initArray();
+        printArray(0);
 
-        int iterations = 0;
-
-        for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-            blocks.add(new Block());
-        }
-
-        for (int y = 0; y < 6; y++) {
-            for (int x = 0; x < 6; x++) {
-                blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
-                blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
+        // FIXME: 09.12.2022 Dynamic Blocks
+        /*for (int y = 0; y < blocks.get(0).getRows(); y++) {
+            for (int x = 0; x < blocks.get(0).getColumns(); x++) {
+                allWidth += blocks.get(iterations).getWidth();
+                allWidth += blocks.get(iterations).getHeight();
+                if (allWidth <= Settings.SCREEN_WIDTH) {
+                    blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                }
+                if (allHeight <= Settings.SCREEN_HEIGHT / 2) {
+                    blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
+                }
                 iterations++;
             }
-        }
+        }*/
 
         //DEFAULT Settings
         Settings.DEFAULT_BALL_X = player.getX() + player.getWidth() / 2 - ball.getWidth() / 2; //ball.getX();
@@ -59,10 +63,10 @@ public class EventHandler {
 
     public void moveBall() {
         if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
-            player.setLives(player.getLives() - 1);
             reset = true;
             resetValues();
         } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
+            player.setLives(player.getLives() - 1);
             resetBall();
         }
         if (ball.getX() + ball.getWidth() >= Settings.SCREEN_WIDTH) {
@@ -93,20 +97,32 @@ public class EventHandler {
             ball.loadSourceImage(ball.getSkin(3));
             resetBall();
 
-            player.setScore(0);
+            player.setScore(Settings.DEFAULT_SCORE);
             player.setLives(Settings.DEFAULT_PLAYER_LIVES);
 
+            blocks.clear();
+            int ranX = new Random().nextInt(5) + 2;
+            int ranY = new Random().nextInt(5) + 2;
+            Settings.NUMBER_OF_BLOCKS = ranX * ranY;
             lives = Settings.NUMBER_OF_BLOCKS;
+
+            initArray();
+            blocks.get(0).setColumns(ranY);
+            blocks.get(0).setRows(ranX);
+
             for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-                blocks.get(i).setLives(Settings.DEFAULT_PLAYER_LIVES);
+                blocks.get(i).setLives(Settings.DEFAULT_BLOCK_LIVES);
                 blocks.get(i).setAlive(true);
                 blocks.get(i).loadSourceImage(Settings.DEFAULT_BLOCK_IMG);
             }
+
+            printArray(0);
+
             reset = false;
         }
     }
 
-    public void resetBall() {
+    private void resetBall() {
         view.isRunning = false;
         ball.setVelocityX(Settings.DEFAULT_BALL_VELOCITY_X);
         ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
@@ -171,18 +187,21 @@ public class EventHandler {
                     block.setLives(2);
                     block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
+                    ball.loadSourceImage(ball.getSkin(3));
                     return;
                 }
                 if (block.getLives() == 2) {
                     block.setLives(1);
                     block.loadSourceImage(BlockState.BROKEN.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
+                    ball.loadSourceImage(ball.getSkin(3));
                     return;
                 }
                 if (block.getLives() == 1) {
                     block.setLives(0);
                     block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
+                    ball.loadSourceImage(ball.getSkin(3));
                     return;
                 }
                 //ball.setVelocityY(ball.getVelocityY() * -1);
@@ -216,4 +235,21 @@ public class EventHandler {
         }
         resetValues();
     }
+
+    private void printArray(int iterations) {
+        for (int y = 0; y < blocks.get(0).getRows(); y++) {
+            for (int x = 0; x < blocks.get(0).getColumns(); x++) {
+                blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
+                iterations++;
+            }
+        }
+    }
+
+    private void initArray() {
+        for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
+            blocks.add(new Block(6, 6));
+        }
+    }
+
 }

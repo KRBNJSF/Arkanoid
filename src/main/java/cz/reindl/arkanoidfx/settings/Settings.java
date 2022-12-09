@@ -8,7 +8,7 @@ public abstract class Settings {
 
     //BLOCKS
     public static int NUMBER_OF_BLOCKS = 36;
-    public static int DEFAULT_BLOCK_LIVES;
+    public static int DEFAULT_BLOCK_LIVES = 3;
     public static String DEFAULT_BLOCK_IMG = "healthyBlock.png";
 
     //BALL
@@ -19,7 +19,7 @@ public abstract class Settings {
 
     //PLAYER
     public static double DEFAULT_PLAYER_X;
-    public static int DEFAULT_SCORE;
-    public static int DEFAULT_PLAYER_LIVES = 3;
+    public static int DEFAULT_SCORE = 0;
+    public static int DEFAULT_PLAYER_LIVES = 2;
 
 }
