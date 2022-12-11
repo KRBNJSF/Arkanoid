@@ -5,7 +5,9 @@ import cz.reindl.arkanoidfx.entity.Block;
 import cz.reindl.arkanoidfx.entity.BlockState;
 import cz.reindl.arkanoidfx.entity.Player;
 import cz.reindl.arkanoidfx.settings.Settings;
+import cz.reindl.arkanoidfx.utils.Utils;
 import cz.reindl.arkanoidfx.view.GameView;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.robot.Robot;
 
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class EventHandler {
     public int lives = Settings.NUMBER_OF_BLOCKS;
     public int allWidth = 0;
     public int allHeight = 0;
+    public int level = 1;
+    ColorAdjust colorAdjust;
 
     public EventHandler(GameView view) {
         this.view = view;
@@ -28,6 +32,9 @@ public class EventHandler {
     }
 
     private void initGameObjects() {
+        colorAdjust = new ColorAdjust();
+        colorAdjust.setHue(100);
+
         player = new Player(Settings.DEFAULT_SCORE, Settings.DEFAULT_PLAYER_LIVES, 5);
         player.setX(Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2);
         player.setY(Settings.SCREEN_HEIGHT - player.getWidth() / 2);
@@ -101,8 +108,8 @@ public class EventHandler {
             player.setLives(Settings.DEFAULT_PLAYER_LIVES);
 
             blocks.clear();
-            int ranX = new Random().nextInt(5) + 2;
-            int ranY = new Random().nextInt(5) + 2;
+            int ranX = new Random().nextInt(5) + 3;
+            int ranY = new Random().nextInt(5) + 3;
             Settings.NUMBER_OF_BLOCKS = ranX * ranY;
             lives = Settings.NUMBER_OF_BLOCKS;
 
@@ -187,21 +194,21 @@ public class EventHandler {
                     block.setLives(2);
                     block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
-                    ball.loadSourceImage(ball.getSkin(3));
+                    changeBall();
                     return;
                 }
                 if (block.getLives() == 2) {
                     block.setLives(1);
                     block.loadSourceImage(BlockState.BROKEN.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
-                    ball.loadSourceImage(ball.getSkin(3));
+                    changeBall();
                     return;
                 }
                 if (block.getLives() == 1) {
                     block.setLives(0);
                     block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
                     ball.setVelocityY(ball.getVelocityY() * -1);
-                    ball.loadSourceImage(ball.getSkin(3));
+                    changeBall();
                     return;
                 }
                 //ball.setVelocityY(ball.getVelocityY() * -1);
@@ -210,10 +217,6 @@ public class EventHandler {
             }
         }
 
-    }
-
-    private void addToScore() {
-        player.setScore(player.getScore() + 100);
     }
 
     public void checkBlockState() {
@@ -232,6 +235,7 @@ public class EventHandler {
         view.isRunning = false;
         if (player.getScore() > 0) {
             reset = true;
+            level++;
         }
         resetValues();
     }
@@ -241,6 +245,14 @@ public class EventHandler {
             for (int x = 0; x < blocks.get(0).getColumns(); x++) {
                 blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
                 blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
+                if (lives >= 6 && level > 1) {
+                    blocks.get(iterations).setAlive(Utils.getRandomBoolean());
+                }
+                if (!blocks.get(iterations).isAlive()) {
+                    blocks.get(iterations).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
+                    blocks.get(iterations).setLives(0);
+                    lives--;
+                }
                 iterations++;
             }
         }
@@ -248,7 +260,18 @@ public class EventHandler {
 
     private void initArray() {
         for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-            blocks.add(new Block(6, 6));
+            blocks.add(new Block(7, 7));
+        }
+    }
+
+    private void addToScore() {
+        player.setScore(player.getScore() + 100);
+    }
+
+    private void changeBall() {
+        String oldImg = ball.getImgSrc();
+        while (ball.getImgSrc().equals(oldImg)) {
+            ball.loadSourceImage(ball.getSkin(3));
         }
     }
 

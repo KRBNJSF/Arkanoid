@@ -25,7 +25,7 @@ public abstract class GameObject {
     public void loadSourceImage(String imgSrc) {
         this.image = new Image(imgSrc);
         this.imgSrc = imgSrc;
-        //this.imageView = new ImageView(this.image);
+        this.imageView = new ImageView(this.image);
     }
 
     protected void getImageSize() {

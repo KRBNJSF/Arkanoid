@@ -7,7 +7,7 @@ public abstract class Settings {
     public static double SCREEN_HEIGHT;
 
     //BLOCKS
-    public static int NUMBER_OF_BLOCKS = 36;
+    public static int NUMBER_OF_BLOCKS = 49;
     public static int DEFAULT_BLOCK_LIVES = 3;
     public static String DEFAULT_BLOCK_IMG = "healthyBlock.png";
 
@@ -21,5 +21,9 @@ public abstract class Settings {
     public static double DEFAULT_PLAYER_X;
     public static int DEFAULT_SCORE = 0;
     public static int DEFAULT_PLAYER_LIVES = 2;
+
+    //LEVELS
+    String[][] level1 = {
+            {"x", "x", "_", "_"}};
 
 }

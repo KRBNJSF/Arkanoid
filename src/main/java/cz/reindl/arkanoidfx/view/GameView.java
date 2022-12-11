@@ -90,6 +90,9 @@ public class GameView extends Application implements Initializable {
                 handler.reset = true;
                 handler.resetValues();
             }
+            if (keyEvent.getCode() == KeyCode.P) {
+                isWin = true;
+            }
             if (keyEvent.getCode() == KeyCode.A) {
                 handler.player.setX(handler.player.getX() - 50);
             }
@@ -160,7 +163,7 @@ public class GameView extends Application implements Initializable {
             gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()), Settings.SCREEN_WIDTH - 100, 60);
         }
         if (isWin) {
-            gc.strokeText("You won \n Score: " + lastScore, Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+            gc.strokeText("You won \n Score: " + lastScore + "\n Level: " + handler.level, Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
             handler.gameWin();
         }
         gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
