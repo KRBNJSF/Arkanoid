@@ -1,9 +1,7 @@
 package cz.reindl.arkanoidfx.event;
 
-import cz.reindl.arkanoidfx.entity.Ball;
-import cz.reindl.arkanoidfx.entity.Block;
-import cz.reindl.arkanoidfx.entity.BlockState;
-import cz.reindl.arkanoidfx.entity.Player;
+import cz.reindl.arkanoidfx.entity.*;
+import cz.reindl.arkanoidfx.event.boost.Boosts;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.utils.Utils;
 import cz.reindl.arkanoidfx.view.GameView;
@@ -16,9 +14,12 @@ import java.util.Random;
 public class EventHandler {
 
     GameView view;
+    Boosts boosts = new Boosts(this);
     public Player player;
     public Ball ball;
+    public PowerUp powerUp;
     public ArrayList<Block> blocks;
+
     public boolean reset;
     public int lives = Settings.NUMBER_OF_BLOCKS;
     public int allWidth = 0;
@@ -42,6 +43,8 @@ public class EventHandler {
         ball = new Ball(0, -7);
         ball.setX(player.getX() + player.getWidth() / 2 - ball.getWidth() / 2);
         ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3);
+
+        powerUp = new PowerUp(0, 5);
 
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
         initArray();
@@ -136,6 +139,8 @@ public class EventHandler {
         ball.setX(Settings.DEFAULT_BALL_X);
         ball.setY(Settings.DEFAULT_BALL_Y);
 
+        powerUp.setVisible(false);
+
         Robot robot = new Robot();
         robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
     }
@@ -189,6 +194,11 @@ public class EventHandler {
         for (Block block : blocks) {
             if (ball.getRect().intersects(block.getRect().getBoundsInParent()) && block.getLives() > 0 && block.isAlive()) {
                 addToScore();
+                if (new Random().nextInt(2) == 1 && !powerUp.isVisible()) {
+                    powerUp.setX(block.getX() + block.getWidth() / 2);
+                    powerUp.setY(block.getY());
+                    powerUp.setVisible(true);
+                }
                 System.out.println(player.getScore() + ": " + block.getX());
                 if (block.getLives() == 3) {
                     block.setLives(2);
@@ -228,6 +238,18 @@ public class EventHandler {
                 blocks.get(i).setAlive(false);
                 lives--;
             }
+        }
+    }
+
+    public void checkPowerUpCollision() {
+        if (player.getRect().getBoundsInParent().intersects(powerUp.getRect().getBoundsInParent()) && powerUp.isVisible()) {
+            switch (Utils.getRandomNumber(1, 0)) {
+                case 0 -> boosts.boost1();
+                case 1 -> {
+                    System.out.println("nic");
+                }
+            }
+            powerUp.setVisible(false);
         }
     }
 
@@ -272,6 +294,16 @@ public class EventHandler {
         String oldImg = ball.getImgSrc();
         while (ball.getImgSrc().equals(oldImg)) {
             ball.loadSourceImage(ball.getSkin(3));
+        }
+    }
+
+    public void checkPowerUpPosition() {
+        checkPowerUpCollision();
+        if (powerUp.isVisible()) {
+            powerUp.setY(powerUp.getY() + powerUp.getVelocityY());
+        }
+        if (powerUp.getY() >= Settings.SCREEN_HEIGHT) {
+            powerUp.setVisible(false);
         }
     }
 

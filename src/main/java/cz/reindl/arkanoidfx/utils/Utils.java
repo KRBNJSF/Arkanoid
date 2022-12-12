@@ -8,4 +8,8 @@ public class Utils {
         return new Random().nextBoolean();
     }
 
+    public static int getRandomNumber(int bound, int startPoint) {
+        return new Random().nextInt(bound) + startPoint;
+    }
+
 }

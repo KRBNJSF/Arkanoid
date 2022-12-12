@@ -156,6 +156,7 @@ public class GameView extends Application implements Initializable {
             handler.checkBallCollision();
             handler.checkBlockState();
             handler.checkBlockCollision();
+            handler.checkPowerUpPosition();
         } else if (!isWin) {
             gc.strokeText("Click to Start", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
@@ -165,6 +166,9 @@ public class GameView extends Application implements Initializable {
         if (isWin) {
             gc.strokeText("You won \n Score: " + lastScore + "\n Level: " + handler.level, Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
             handler.gameWin();
+        }
+        if (handler.powerUp.isVisible()) {
+            gc.drawImage(handler.powerUp.getImage(), handler.powerUp.getX(), handler.powerUp.getY(), handler.powerUp.getWidth(), handler.powerUp.getHeight());
         }
         gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
         //gc.setFont(Font.font(text.getText(), 40));
