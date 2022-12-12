@@ -243,7 +243,7 @@ public class EventHandler {
 
     public void checkPowerUpCollision() {
         if (player.getRect().getBoundsInParent().intersects(powerUp.getRect().getBoundsInParent()) && powerUp.isVisible()) {
-            switch (Utils.getRandomNumber(1, 0)) {
+            switch (Utils.getRandomNumber(2, 0)) { // FIXME: 13.12.2022 Add more power ups and change percentage
                 case 0 -> boosts.boost1();
                 case 1 -> {
                     System.out.println("nic");
