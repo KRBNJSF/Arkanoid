@@ -160,7 +160,7 @@ public class GameView extends Application implements Initializable {
             gc.strokeText("Click to Start", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
         if (handler.player.getLives() >= 0) {
-            gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()), Settings.SCREEN_WIDTH - 100, 60);
+            gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()) + "\n Level: " + handler.level, Settings.SCREEN_WIDTH - 100, 60);
         }
         if (isWin) {
             gc.strokeText("You won \n Score: " + lastScore + "\n Level: " + handler.level, Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
