@@ -5,3 +5,4 @@
 
 ## Needs to be added:
 - **Levels via 2D array**
+- **More power ups**
