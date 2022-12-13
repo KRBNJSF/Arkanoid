@@ -80,6 +80,7 @@ public class EventHandler {
         if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
             playSoundEffect(sound.gameLoseSound, false);
             reset = true;
+            level = 1;
             resetValues();
         } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
             player.setLives(player.getLives() - 1);
@@ -114,6 +115,7 @@ public class EventHandler {
         if (reset) {
             view.lastScore = player.getScore();
             view.isRunning = false;
+
             player.loadSourceImage(player.getSkin(3));
             player.setWidth((int) player.getImage().getWidth());
             player.setHeight((int) player.getImage().getHeight());
