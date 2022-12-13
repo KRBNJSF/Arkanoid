@@ -17,8 +17,11 @@ public class Sound {
     MP3Player musicPlayer;
     MP3Player soundEffectPlayer;
 
+    public File currentMusic;
+
     //MUSIC
-    public File backgroundMusic = new File(prefix + "shopMusic.mp3");
+    public File backgroundMusic = new File(prefix + "backgroundMusic.mp3");
+    public File backgroundMusic2 = new File(prefix + "backgroundMusic2.mp3");
 
     //SOUND EFFECTS
     public File blockHit = new File(prefix + "punch.mp3");

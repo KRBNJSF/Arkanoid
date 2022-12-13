@@ -33,7 +33,8 @@ public class EventHandler {
     public EventHandler(GameView view) {
         this.view = view;
         initGameObjects();
-        playMusic(sound.backgroundMusic, true);
+        sound.currentMusic = sound.backgroundMusic;
+        playMusic(sound.currentMusic, true);
     }
 
     private void initGameObjects() {
@@ -83,6 +84,11 @@ public class EventHandler {
         } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
             player.setLives(player.getLives() - 1);
             playSoundEffect(sound.lifeLoseSound, false);
+            if (!sound.currentMusic.equals(sound.backgroundMusic2)) {
+                stopMusic(sound.currentMusic);
+                sound.currentMusic = sound.backgroundMusic2;
+                playMusic(sound.backgroundMusic2, true);
+            }
             resetBall();
         }
         if (ball.getX() + ball.getWidth() >= Settings.SCREEN_WIDTH) {
