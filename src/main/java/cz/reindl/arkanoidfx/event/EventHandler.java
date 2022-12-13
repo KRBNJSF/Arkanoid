@@ -3,11 +3,13 @@ package cz.reindl.arkanoidfx.event;
 import cz.reindl.arkanoidfx.entity.*;
 import cz.reindl.arkanoidfx.event.boost.Boosts;
 import cz.reindl.arkanoidfx.settings.Settings;
+import cz.reindl.arkanoidfx.sound.Sound;
 import cz.reindl.arkanoidfx.utils.Utils;
 import cz.reindl.arkanoidfx.view.GameView;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.robot.Robot;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,6 +17,7 @@ public class EventHandler {
 
     GameView view;
     Boosts boosts = new Boosts(this);
+    Sound sound = new Sound(this);
     public Player player;
     public Ball ball;
     public PowerUp powerUp;
@@ -30,6 +33,7 @@ public class EventHandler {
     public EventHandler(GameView view) {
         this.view = view;
         initGameObjects();
+        playMusic(sound.backgroundMusic, true);
     }
 
     private void initGameObjects() {
@@ -305,6 +309,28 @@ public class EventHandler {
         if (powerUp.getY() >= Settings.SCREEN_HEIGHT) {
             powerUp.setVisible(false);
         }
+    }
+
+    //MUSIC
+    public void playMusic(File file, Boolean loop) {
+        sound.setFile(file);
+        sound.playSound(file);
+        sound.loopSound(loop);
+    }
+
+    public void stopMusic(File file) {
+        sound.stopSound(file);
+    }
+
+    //SOUND EFFECTS
+    public void playSoundEffect(File file, Boolean loop) {
+        sound.setSoundEffect(file);
+        sound.playSoundEffect(file);
+        sound.loopSoundEffect(loop);
+    }
+
+    public void stopSoundEffect(File file) {
+        sound.stopSoundEffect(file);
     }
 
 }
