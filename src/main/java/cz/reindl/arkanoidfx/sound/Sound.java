@@ -22,6 +22,7 @@ public class Sound {
     //MUSIC
     public File backgroundMusic = new File(prefix + "backgroundMusic.mp3");
     public File backgroundMusic2 = new File(prefix + "backgroundMusic2.mp3");
+    public File backgroundMain = new File(prefix + "backgroundMain.mp3");
 
     //SOUND EFFECTS
     public File blockHit = new File(prefix + "punch.mp3");
