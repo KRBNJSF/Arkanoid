@@ -5,7 +5,6 @@ import cz.reindl.arkanoidfx.settings.Settings;
 public class Block extends GameObject {
 
     private int score, lives, rows, columns;
-
     private boolean isAlive;
 
     public Block(int columns, int rows) {

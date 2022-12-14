@@ -8,32 +8,36 @@ import java.io.File;
 public class Sound {
 
     EventHandler handler;
-    private String prefix = "src/main/resources/music/";
 
     public Sound(EventHandler handler) {
         this.handler = handler;
     }
 
-    MP3Player musicPlayer;
-    MP3Player soundEffectPlayer;
-
+    private MP3Player musicPlayer;
+    private MP3Player soundEffectPlayer;
     public File currentMusic;
 
-    //MUSIC
-    public File backgroundMusic = new File(prefix + "backgroundMusic.mp3");
-    public File backgroundMusic2 = new File(prefix + "backgroundMusic2.mp3");
-    public File backgroundMain = new File(prefix + "backgroundMain.mp3");
+    //MUSIC UTILS
+    public void playMusic(File file, Boolean loop) {
+        setFile(file);
+        playSound(file);
+        loopSound(loop);
+    }
 
-    //SOUND EFFECTS
-    public File blockHit = new File(prefix + "punch.mp3");
-    public File blockHit2 = new File(prefix + "ratBite.mp3");
-    public File blockHit3 = new File(prefix + "daggerHit.mp3");
-    public File powerUpHit = new File(prefix + "healEffect.mp3");
-    public File gameWinEffect = new File(prefix + "fightWin.mp3");
-    public File scoreEarnEffect = new File(prefix + "moneyEarn.mp3");
-    public File gameLoseSound = new File(prefix + "fightLoseSound.mp3");
-    public File lifeLoseSound = new File(prefix + "levelUp.mp3");
-    public File wallHit = new File(prefix + "swordSlash.mp3");
+    public void stopMusic(File file) {
+        stopSound(file);
+    }
+
+    //SOUND EFFECTS UTILS
+    public void playSoundEffect(File file, Boolean loop) {
+        setSoundEffect(file);
+        startSoundEffect(file);
+        loopSoundEffect(loop);
+    }
+
+    public void pauseSoundEffect(File file) {
+        stopSoundEffect(file);
+    }
 
     //MUSIC SETTINGS
     public void setFile(File name) {
@@ -42,6 +46,27 @@ public class Sound {
         } catch (Exception e) {
             System.out.println(e);
         }
+    }
+
+    //SOUND EFFECTS SETTINGS
+    public void setSoundEffect(File name) {
+        try {
+            soundEffectPlayer = new MP3Player(name);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public void startSoundEffect(File name) {
+        soundEffectPlayer.play();
+    }
+
+    public void loopSoundEffect(Boolean loop) {
+        soundEffectPlayer.setRepeat(loop);
+    }
+
+    public void stopSoundEffect(File name) {
+        soundEffectPlayer.stop();
     }
 
     public void playSound(File name) {
@@ -54,27 +79,6 @@ public class Sound {
 
     public void stopSound(File name) {
         musicPlayer.stop();
-    }
-
-    //SOUND EFFECTS SETTINGS
-    public void setSoundEffect(File name) {
-        try {
-            soundEffectPlayer = new MP3Player(name);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
-    public void playSoundEffect(File name) {
-        soundEffectPlayer.play();
-    }
-
-    public void loopSoundEffect(Boolean loop) {
-        soundEffectPlayer.setRepeat(loop);
-    }
-
-    public void stopSoundEffect(File name) {
-        soundEffectPlayer.stop();
     }
 
 }

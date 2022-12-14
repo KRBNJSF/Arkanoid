@@ -1,7 +1,5 @@
 package cz.reindl.arkanoidfx.entity;
 
-import javafx.event.EventHandler;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 import java.util.Random;
@@ -32,8 +30,8 @@ public class Player extends GameObject {
 
     public void keyPressed(KeyEvent event) {
         switch (event.getCode()) {
-            case A, LEFT -> velocityX = 5;
-            case D, RIGHT -> velocityX = -5;
+            case A, LEFT -> velocityX = 50;
+            case D, RIGHT -> velocityX = -50;
         }
 
     }

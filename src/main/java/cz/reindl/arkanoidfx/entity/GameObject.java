@@ -97,4 +97,11 @@ public abstract class GameObject {
         this.imageView = imageView;
     }
 
+    public String[] getSkins() {
+        return skins;
+    }
+
+    public void setSkins(String[] skins) {
+        this.skins = skins;
+    }
 }

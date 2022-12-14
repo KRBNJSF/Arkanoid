@@ -5,6 +5,7 @@ import cz.reindl.arkanoidfx.event.EventHandler;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -40,34 +41,42 @@ public class GameView extends Application implements Initializable {
     Text text = new Text("Score: ");
 
     public void start(Stage stage) throws Exception {
+
         //GETTING MONITOR DIMENSIONS
         screenSize = Screen.getPrimary().getBounds();
         Settings.SCREEN_WIDTH = screenSize.getWidth();
-
         Settings.SCREEN_HEIGHT = screenSize.getHeight();
+
+        handler = new EventHandler(this);
 
         canvas = new Canvas(Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
-        handler = new EventHandler(this);
-
-        stage.setTitle("ArkanoidFX");
-        stage.setFullScreen(true);
 
         timeline = new Timeline(new KeyFrame(Duration.millis(10), l -> invalidateView(gc)));
         timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
 
-        canvas.setOnMouseMoved(l -> {
-            if (l.getX() <= Settings.SCREEN_WIDTH - handler.player.getWidth()) {
+        Scene scene = new Scene(new Pane(canvas));
+        scene.setCursor(Cursor.NONE);
+
+        stage.setTitle("ArkanoidFX");
+        stage.setFullScreen(true);
+        stage.setScene(scene);
+        GameView.stage = stage;
+        stage.show();
+
+        canvas.setOnMouseMoved(mouseEvent -> {
+            if (mouseEvent.getX() <= Settings.SCREEN_WIDTH - handler.player.getWidth()) {
                 /* Robot robot = new Robot();
                 robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2); */
-                handler.player.setX(l.getX());
+                handler.player.setX(mouseEvent.getX());
                 if (!isRunning) {
                     handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
                 }
             }
         });
-        canvas.setOnMouseClicked(l -> {
-            if (l.getButton() == MouseButton.PRIMARY) {
+        canvas.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 isWin = false;
                 isRunning = true;
                 lastScore = 0;
@@ -77,8 +86,6 @@ public class GameView extends Application implements Initializable {
         canvas.setOnKeyPressed(event -> handler.player.keyPressed(event));
         canvas.setOnKeyReleased(event -> handler.player.keyReleased(event));
 
-        Scene scene = new Scene(new Pane(canvas));
-        scene.setCursor(Cursor.NONE);
         scene.addEventHandler(KeyEvent.KEY_PRESSED, keyEvent -> {
             if (keyEvent.getCode() == KeyCode.ESCAPE) {
                 stage.close();
@@ -93,27 +100,27 @@ public class GameView extends Application implements Initializable {
             if (keyEvent.getCode() == KeyCode.P) {
                 isWin = true;
             }
-            if (keyEvent.getCode() == KeyCode.A) {
-                handler.player.setX(handler.player.getX() - 50);
-            }
-            if (keyEvent.getCode() == KeyCode.D) {
-                handler.player.setX(handler.player.getX() + 50);
+            if (keyEvent.getCode() == KeyCode.O) {
+                isRunning = false;
             }
             if (keyEvent.getCode() == KeyCode.SPACE) {
                 isWin = false;
                 isRunning = true;
                 lastScore = 0;
             }
+
+            //TEST
+            if (keyEvent.getCode() == KeyCode.A && handler.player.getX() > handler.player.getWidth() / 2) {
+                handler.player.setX(handler.player.getX() - 50);
+            }
+            if (keyEvent.getCode() == KeyCode.D && handler.player.getX() + handler.player.getWidth() < Settings.SCREEN_WIDTH) {
+                handler.player.setX(handler.player.getX() + 50);
+            }
             if (!isRunning) {
                 handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
             }
         });
 
-        stage.setScene(scene);
-        GameView.stage = stage;
-        stage.show();
-
-        timeline.play();
     }
 
     private void invalidateView(GraphicsContext gc) {
