@@ -90,14 +90,18 @@ public class EventHandler {
                 level = 1;
                 resetValues();
             } else if (balls.get(i).getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
-                player.setLives(player.getLives() - 1);
-                playSoundEffect(sound.lifeLoseSound, false);
+                balls.remove(balls.get(i));
+                boosts.ballCount--;
+                if (boosts.ballCount <= 1) {
+                    player.setLives(player.getLives() - 1);
+                    playSoundEffect(sound.lifeLoseSound, false);
+                    resetBall();
+                }
             /*if (!sound.currentMusic.equals(sound.backgroundMusic2)) {
                 stopMusic(sound.currentMusic);
                 sound.currentMusic = sound.backgroundMain;
                 playMusic(sound.currentMusic, true);
             }*/
-                resetBall();
             }
             if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
                 balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
