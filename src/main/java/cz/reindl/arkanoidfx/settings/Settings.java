@@ -23,13 +23,13 @@ public abstract class Settings {
     public static int DEFAULT_PLAYER_LIVES = 2;
 
     //LEVELS
-    public static String[][] LEVEL_1 = {
-            {"x", "x", "x", "x", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"_", "_", "_", "_", "_", "_"},
-            {"_", "_", "_", "_", "_", "_"},
+    public static char[][] LEVEL_1 = {
+            {'x', 'x', 'x', 'x', 'x', 'x'},
+            {'x', 'x', '_', '_', 'x', 'x'},
+            {'x', 'x', '_', '_', 'x', 'x'},
+            {'x', 'x', '_', '_', 'x', 'x'},
+            {'_', '_', '_', '_', '_', '_'},
+            {'_', '_', '_', '_', '_', '_'},
     };
 
     public static String[][] LEVEL_2 = {

@@ -2,6 +2,7 @@ package cz.reindl.arkanoidfx.event;
 
 import cz.reindl.arkanoidfx.entity.*;
 import cz.reindl.arkanoidfx.event.boost.Boosts;
+import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.sound.Music;
 import cz.reindl.arkanoidfx.sound.Sound;
@@ -11,6 +12,7 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.robot.Robot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class EventHandler {
@@ -62,6 +64,8 @@ public class EventHandler {
         powerUp = new PowerUp(0, 5);
 
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
+        // FIXME: 15.12.2022
+        //  printLevel(0);
         initArray();
         printArray(0);
 
@@ -278,6 +282,31 @@ public class EventHandler {
                     blocks.get(iterations).setLives(0);
                     lives--;
                 }
+                iterations++;
+            }
+        }
+    }
+
+    private void printLevel(int iterations) {
+
+        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
+        }
+
+        for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
+            for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
+                for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+                    for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
+                        if (Level.LEVEL1.getLevel()[i][j] == '_') {
+                            blocks.get(i).setAlive(false);
+                            blocks.get(i).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
+                            blocks.get(i).setLives(0);
+                            lives--;
+                        }
+                    }
+                }
+                blocks.get(x).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(x).getWidth()));
+                blocks.get(y).setY(y * blocks.get(y).getHeight());
                 iterations++;
             }
         }
