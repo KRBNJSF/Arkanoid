@@ -17,7 +17,7 @@ public class EventHandler {
 
     GameView view;
     Boosts boosts = new Boosts(this);
-    Sound sound = new Sound(this);
+    public Sound sound = new Sound(this);
 
     public Player player;
     public Ball ball;

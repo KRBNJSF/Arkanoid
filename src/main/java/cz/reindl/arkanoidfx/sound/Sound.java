@@ -16,6 +16,7 @@ public class Sound {
     private MP3Player musicPlayer;
     private MP3Player soundEffectPlayer;
     public File currentMusic;
+    public boolean isPlayable = true;
 
     //MUSIC UTILS
     public void playMusic(File file, Boolean loop) {
@@ -28,11 +29,17 @@ public class Sound {
         stopSound(file);
     }
 
+    public void pauseMusic(File file) {
+        pauseSound(file);
+    }
+
     //SOUND EFFECTS UTILS
     public void playSoundEffect(File file, Boolean loop) {
-        setSoundEffect(file);
-        startSoundEffect(file);
-        loopSoundEffect(loop);
+        if (isPlayable) {
+            setSoundEffect(file);
+            startSoundEffect(file);
+            loopSoundEffect(loop);
+        }
     }
 
     public void pauseSoundEffect(File file) {
@@ -79,6 +86,10 @@ public class Sound {
 
     public void stopSound(File name) {
         musicPlayer.stop();
+    }
+
+    public void pauseSound(File name) {
+        musicPlayer.pause();
     }
 
 }

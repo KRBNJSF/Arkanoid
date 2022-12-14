@@ -29,7 +29,7 @@ public class GameView extends Application implements Initializable {
 
     public static Stage stage;
     public Timeline timeline;
-    public boolean isRunning;
+    public boolean isRunning, isPaused;
     public boolean isWin;
     public int lastScore = 0;
     private Rectangle2D screenSize;
@@ -79,6 +79,7 @@ public class GameView extends Application implements Initializable {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
                 isWin = false;
                 isRunning = true;
+                isPaused = false;
                 lastScore = 0;
             }
         });
@@ -102,14 +103,25 @@ public class GameView extends Application implements Initializable {
             }
             if (keyEvent.getCode() == KeyCode.O) {
                 isRunning = false;
+                isPaused = true;
             }
-            if (keyEvent.getCode() == KeyCode.SPACE) {
-                isWin = false;
-                isRunning = true;
-                lastScore = 0;
+            if (keyEvent.getCode() == KeyCode.ENTER) {
+                if (handler.sound.isPlayable) {
+                    handler.sound.pauseMusic(handler.sound.currentMusic);
+                    handler.sound.isPlayable = false;
+                } else {
+                    handler.sound.playSound(handler.sound.currentMusic);
+                    handler.sound.isPlayable = true;
+                }
             }
 
             //TEST
+            if (keyEvent.getCode() == KeyCode.SPACE) {
+                isWin = false;
+                isRunning = true;
+                isPaused = false;
+                lastScore = 0;
+            }
             if (keyEvent.getCode() == KeyCode.A && handler.player.getX() > handler.player.getWidth() / 2) {
                 handler.player.setX(handler.player.getX() - 50);
             }
@@ -166,8 +178,10 @@ public class GameView extends Application implements Initializable {
             handler.checkBlockState();
             handler.checkBlockCollision();
             handler.checkPowerUpPosition();
-        } else if (!isWin) {
+        } else if (!isWin && !isPaused) {
             gc.strokeText("Click to Start", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
+        } else {
+            gc.strokeText("PAUSED", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
         if (handler.player.getLives() >= 0) {
             gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()) + "\n Level: " + handler.level, Settings.SCREEN_WIDTH - 100, 60);
