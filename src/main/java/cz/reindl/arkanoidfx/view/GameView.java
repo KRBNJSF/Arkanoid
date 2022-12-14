@@ -17,6 +17,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.robot.Robot;
 import javafx.scene.text.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -67,11 +68,14 @@ public class GameView extends Application implements Initializable {
 
         canvas.setOnMouseMoved(mouseEvent -> {
             if (mouseEvent.getX() <= Settings.SCREEN_WIDTH - handler.player.getWidth()) {
-                /* Robot robot = new Robot();
-                robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2); */
-                handler.player.setX(mouseEvent.getX());
-                if (!isRunning) {
-                    handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
+                if (isPaused) {
+                    Robot robot = new Robot();
+                    robot.mouseMove(handler.player.getX(), Settings.SCREEN_HEIGHT / 2);
+                } else {
+                    handler.player.setX(mouseEvent.getX());
+                    if (!isRunning) {
+                        handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
+                    }
                 }
             }
         });
@@ -98,10 +102,11 @@ public class GameView extends Application implements Initializable {
                 handler.reset = true;
                 handler.resetValues();
             }
-            if (keyEvent.getCode() == KeyCode.P) {
+            if (keyEvent.getCode() == KeyCode.O) {
+                handler.player.setScore(handler.player.getScore() + 100);
                 isWin = true;
             }
-            if (keyEvent.getCode() == KeyCode.O) {
+            if (keyEvent.getCode() == KeyCode.P) {
                 isRunning = false;
                 isPaused = true;
             }
@@ -128,7 +133,7 @@ public class GameView extends Application implements Initializable {
             if (keyEvent.getCode() == KeyCode.D && handler.player.getX() + handler.player.getWidth() < Settings.SCREEN_WIDTH) {
                 handler.player.setX(handler.player.getX() + 50);
             }
-            if (!isRunning) {
+            if (!isRunning && !isPaused) {
                 handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
             }
         });
@@ -180,7 +185,7 @@ public class GameView extends Application implements Initializable {
             handler.checkPowerUpPosition();
         } else if (!isWin && !isPaused) {
             gc.strokeText("Click to Start", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
-        } else {
+        } else if (!isWin) {
             gc.strokeText("PAUSED", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
         if (handler.player.getLives() >= 0) {
