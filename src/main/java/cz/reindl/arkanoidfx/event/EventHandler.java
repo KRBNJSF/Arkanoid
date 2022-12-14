@@ -84,12 +84,12 @@ public class EventHandler {
 
     public void moveBall() {
         for (int i = 0; i < balls.size(); i++) {
-            if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
+            if (balls.get(i).getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
                 playSoundEffect(sound.gameLoseSound, false);
                 reset = true;
                 level = 1;
                 resetValues();
-            } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
+            } else if (balls.get(i).getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
                 player.setLives(player.getLives() - 1);
                 playSoundEffect(sound.lifeLoseSound, false);
             /*if (!sound.currentMusic.equals(sound.backgroundMusic2)) {
@@ -99,23 +99,23 @@ public class EventHandler {
             }*/
                 resetBall();
             }
-            if (ball.getX() + ball.getWidth() >= Settings.SCREEN_WIDTH) {
-                ball.setVelocityX(ball.getVelocityX() * -1);
+            if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
+                balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
                 playSoundEffect(sound.wallHit, false);
             }
-            if (ball.getX() <= 0) {
-                ball.setVelocityX(ball.getVelocityX() * -1);
+            if (balls.get(i).getX() <= 0) {
+                balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
                 playSoundEffect(sound.wallHit, false);
             }
-            if (ball.getY() <= 0) {
-                ball.setY(10);
-                ball.setVelocityY(ball.getVelocityY() * -1);
+            if (balls.get(i).getY() <= 0) {
+                balls.get(i).setY(10);
+                balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
                 playSoundEffect(sound.wallHit, false);
             } else {
-                ball.setVelocityX(ball.getVelocityX());
+                balls.get(i).setVelocityX(balls.get(i).getVelocityX());
             }
-            ball.setX(ball.getX() + ball.getVelocityX());
-            ball.setY(ball.getY() + ball.getVelocityY());
+            balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
+            balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
         }
     }
 
@@ -175,91 +175,95 @@ public class EventHandler {
     }
 
     public void checkBallCollision() {
-        if (ball.getRect().intersects(player.getRect().getBoundsInParent())) {
+        for (int i = 0; i < balls.size(); i++) {
+            if (balls.get(i).getRect().intersects(player.getRect().getBoundsInParent())) {
 
-            playSoundEffect(sound.blockHit, false);
+                playSoundEffect(sound.blockHit, false);
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 5)) {
-                ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(-6);
-                if (ball.getVelocityX() >= 0) {
-                    ball.setVelocityX(ball.getVelocityX() * -1);
+                if (balls.get(i).getBallRect() <= player.getPlayerRect(player.getWidth() / 5)) {
+                    balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                    balls.get(i).setVelocityX(-6);
+                    if (balls.get(i).getVelocityX() >= 0) {
+                        balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                    }
                 }
-            }
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 2.5) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 5)) {
-                ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(-3);
-                if (ball.getVelocityX() >= 0) {
-                    ball.setVelocityX(ball.getVelocityX() * -1);
+                if (balls.get(i).getBallRect() <= player.getPlayerRect(player.getWidth() / 2.5) && balls.get(i).getBallRect() > player.getPlayerRect(player.getWidth() / 5)) {
+                    balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                    balls.get(i).setVelocityX(-3);
+                    if (balls.get(i).getVelocityX() >= 0) {
+                        balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                    }
                 }
-            }
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.66) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 2.5)) {
-                ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(new Random().nextInt(3) - 1);
-            }
-
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.25) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 1.66)) {
-                ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(4);
-                if (ball.getVelocityX() <= 0) {
-                    ball.setVelocityX(-4);
-                    ball.setVelocityX(ball.getVelocityX() * -1);
+                if (balls.get(i).getBallRect() <= player.getPlayerRect(player.getWidth() / 1.66) && balls.get(i).getBallRect() > player.getPlayerRect(player.getWidth() / 2.5)) {
+                    balls.get(i).setVelocityY(ball.getVelocityY() * -1);
+                    balls.get(i).setVelocityX(new Random().nextInt(3) - 1);
                 }
-            }
 
-            if (ball.getBallRect() <= player.getPlayerRect(player.getWidth()) && ball.getBallRect() > player.getPlayerRect(player.getWidth() / 1.25)) {
-                ball.setVelocityY(ball.getVelocityY() * -1);
-                ball.setVelocityX(6);
-                if (ball.getVelocityX() <= 0) {
-                    ball.setVelocityX(-6);
-                    ball.setVelocityX(ball.getVelocityX() * -1);
+                if (balls.get(i).getBallRect() <= player.getPlayerRect(player.getWidth() / 1.25) && balls.get(i).getBallRect() > player.getPlayerRect(player.getWidth() / 1.66)) {
+                    balls.get(i).setVelocityY(ball.getVelocityY() * -1);
+                    balls.get(i).setVelocityX(4);
+                    if (balls.get(i).getVelocityX() <= 0) {
+                        balls.get(i).setVelocityX(-4);
+                        balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                    }
                 }
-            }
 
+                if (balls.get(i).getBallRect() <= player.getPlayerRect(player.getWidth()) && balls.get(i).getBallRect() > player.getPlayerRect(player.getWidth() / 1.25)) {
+                    balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                    balls.get(i).setVelocityX(6);
+                    if (balls.get(i).getVelocityX() <= 0) {
+                        balls.get(i).setVelocityX(-6);
+                        balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                    }
+                }
+
+            }
         }
     }
 
     public void checkBlockCollision() {
         for (Block block : blocks) {
-            if (ball.getRect().intersects(block.getRect().getBoundsInParent()) && block.getLives() > 0 && block.isAlive()) {
-                addToScore();
-                if (new Random().nextInt(2) == 1 && !powerUp.isVisible()) {
-                    powerUp.setX(block.getX() + block.getWidth() / 2);
-                    powerUp.setY(block.getY());
-                    powerUp.setVisible(true);
-                    blockPosX = block.getX() + block.getWidth() / 2;
-                    blockPosY = block.getY();
+            for (int i = 0; i < balls.size(); i++) {
+                if (balls.get(i).getRect().intersects(block.getRect().getBoundsInParent()) && block.getLives() > 0 && block.isAlive()) {
+                    addToScore();
+                    if (new Random().nextInt(2) == 1 && !powerUp.isVisible()) {
+                        powerUp.setX(block.getX() + block.getWidth() / 2);
+                        powerUp.setY(block.getY());
+                        powerUp.setVisible(true);
+                        blockPosX = block.getX() + block.getWidth() / 2;
+                        blockPosY = block.getY();
+                    }
+                    System.out.println(player.getScore() + ": " + block.getX());
+                    if (block.getLives() == 3) {
+                        block.setLives(2);
+                        block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
+                        balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                        playSoundEffect(sound.scoreEarnEffect, false);
+                        changeBall();
+                        return;
+                    }
+                    if (block.getLives() == 2) {
+                        block.setLives(1);
+                        block.loadSourceImage(BlockState.BROKEN.getImgSrc());
+                        balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                        playSoundEffect(sound.blockHit2, false);
+                        changeBall();
+                        return;
+                    }
+                    if (block.getLives() == 1) {
+                        block.setLives(0);
+                        block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
+                        balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                        playSoundEffect(sound.blockHit3, false);
+                        changeBall();
+                        return;
+                    }
+                    //ball.setVelocityY(ball.getVelocityY() * -1);
+                    // FIXME: 04.12.2022 Percentage collision change
+                    //ball.setVelocityX(-5);
                 }
-                System.out.println(player.getScore() + ": " + block.getX());
-                if (block.getLives() == 3) {
-                    block.setLives(2);
-                    block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
-                    ball.setVelocityY(ball.getVelocityY() * -1);
-                    playSoundEffect(sound.scoreEarnEffect, false);
-                    changeBall();
-                    return;
-                }
-                if (block.getLives() == 2) {
-                    block.setLives(1);
-                    block.loadSourceImage(BlockState.BROKEN.getImgSrc());
-                    ball.setVelocityY(ball.getVelocityY() * -1);
-                    playSoundEffect(sound.blockHit2, false);
-                    changeBall();
-                    return;
-                }
-                if (block.getLives() == 1) {
-                    block.setLives(0);
-                    block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                    ball.setVelocityY(ball.getVelocityY() * -1);
-                    playSoundEffect(sound.blockHit3, false);
-                    changeBall();
-                    return;
-                }
-                //ball.setVelocityY(ball.getVelocityY() * -1);
-                // FIXME: 04.12.2022 Percentage collision change
-                //ball.setVelocityX(-5);
             }
         }
 
