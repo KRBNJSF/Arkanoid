@@ -149,7 +149,9 @@ public class GameView extends Application implements Initializable {
             }
         }
 
-        gc.drawImage(handler.ball.getImage(), handler.ball.getX(), handler.ball.getY(), handler.ball.getWidth(), handler.ball.getHeight());
+        for (int i = 0; i < handler.balls.size(); i++) {
+            gc.drawImage(handler.balls.get(i).getImage(), handler.balls.get(i).getX(), handler.balls.get(i).getY(), handler.ball.getWidth(), handler.ball.getHeight());
+        }
 
         if (isRunning) {
             handler.moveBall();

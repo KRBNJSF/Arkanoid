@@ -22,11 +22,13 @@ public class EventHandler {
     public Ball ball;
     public PowerUp powerUp;
     public ArrayList<Block> blocks;
+    public ArrayList<Ball> balls;
 
     public boolean reset;
     public int lives = Settings.NUMBER_OF_BLOCKS;
     public int allWidth = 0;
     public int allHeight = 0;
+    public double blockPosX, blockPosY;
     public int level = 1;
     ColorAdjust colorAdjust;
 
@@ -48,6 +50,10 @@ public class EventHandler {
         ball = new Ball(0, -7);
         ball.setX(player.getX() + player.getWidth() / 2 - ball.getWidth() / 2);
         ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3);
+
+        balls = new ArrayList<Ball>();
+
+        balls.add(ball);
 
         powerUp = new PowerUp(0, 5);
 
@@ -77,38 +83,40 @@ public class EventHandler {
     }
 
     public void moveBall() {
-        if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
-            playSoundEffect(sound.gameLoseSound, false);
-            reset = true;
-            level = 1;
-            resetValues();
-        } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
-            player.setLives(player.getLives() - 1);
-            playSoundEffect(sound.lifeLoseSound, false);
+        for (int i = 0; i < balls.size(); i++) {
+            if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
+                playSoundEffect(sound.gameLoseSound, false);
+                reset = true;
+                level = 1;
+                resetValues();
+            } else if (ball.getY() >= Settings.SCREEN_HEIGHT && player.getLives() > 0) {
+                player.setLives(player.getLives() - 1);
+                playSoundEffect(sound.lifeLoseSound, false);
             /*if (!sound.currentMusic.equals(sound.backgroundMusic2)) {
                 stopMusic(sound.currentMusic);
                 sound.currentMusic = sound.backgroundMain;
                 playMusic(sound.currentMusic, true);
             }*/
-            resetBall();
+                resetBall();
+            }
+            if (ball.getX() + ball.getWidth() >= Settings.SCREEN_WIDTH) {
+                ball.setVelocityX(ball.getVelocityX() * -1);
+                playSoundEffect(sound.wallHit, false);
+            }
+            if (ball.getX() <= 0) {
+                ball.setVelocityX(ball.getVelocityX() * -1);
+                playSoundEffect(sound.wallHit, false);
+            }
+            if (ball.getY() <= 0) {
+                ball.setY(10);
+                ball.setVelocityY(ball.getVelocityY() * -1);
+                playSoundEffect(sound.wallHit, false);
+            } else {
+                ball.setVelocityX(ball.getVelocityX());
+            }
+            ball.setX(ball.getX() + ball.getVelocityX());
+            ball.setY(ball.getY() + ball.getVelocityY());
         }
-        if (ball.getX() + ball.getWidth() >= Settings.SCREEN_WIDTH) {
-            ball.setVelocityX(ball.getVelocityX() * -1);
-            playSoundEffect(sound.wallHit, false);
-        }
-        if (ball.getX() <= 0) {
-            ball.setVelocityX(ball.getVelocityX() * -1);
-            playSoundEffect(sound.wallHit, false);
-        }
-        if (ball.getY() <= 0) {
-            ball.setY(10);
-            ball.setVelocityY(ball.getVelocityY() * -1);
-            playSoundEffect(sound.wallHit, false);
-        } else {
-            ball.setVelocityX(ball.getVelocityX());
-        }
-        ball.setX(ball.getX() + ball.getVelocityX());
-        ball.setY(ball.getY() + ball.getVelocityY());
     }
 
     public void resetValues() {
@@ -151,10 +159,14 @@ public class EventHandler {
 
     private void resetBall() {
         view.isRunning = false;
+        boosts.ballCount = 0;
+        balls.clear();
+        ball = new Ball(-7, 0);
         ball.setVelocityX(Settings.DEFAULT_BALL_VELOCITY_X);
         ball.setVelocityY(Settings.DEFAULT_BALL_VELOCITY_Y);
         ball.setX(Settings.DEFAULT_BALL_X);
         ball.setY(Settings.DEFAULT_BALL_Y);
+        balls.add(ball);
 
         powerUp.setVisible(false);
 
@@ -217,6 +229,8 @@ public class EventHandler {
                     powerUp.setX(block.getX() + block.getWidth() / 2);
                     powerUp.setY(block.getY());
                     powerUp.setVisible(true);
+                    blockPosX = block.getX() + block.getWidth() / 2;
+                    blockPosY = block.getY();
                 }
                 System.out.println(player.getScore() + ": " + block.getX());
                 if (block.getLives() == 3) {
@@ -269,9 +283,7 @@ public class EventHandler {
             playSoundEffect(sound.powerUpHit, false);
             switch (Utils.getRandomNumber(2, 0)) { // FIXME: 13.12.2022 Add more power ups and change percentage
                 case 0 -> boosts.boost1();
-                case 1 -> {
-                    System.out.println("nic");
-                }
+                case 1 -> boosts.boost2(blockPosX, blockPosY);
             }
             powerUp.setVisible(false);
         }

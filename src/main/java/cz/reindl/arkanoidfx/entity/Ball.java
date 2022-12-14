@@ -1,16 +1,19 @@
 package cz.reindl.arkanoidfx.entity;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Ball extends GameObject {
 
     private int velocityX, velocityY;
+    private ArrayList<Ball> balls;
 
     public Ball(int velocityX, int velocityY) {
         super();
         this.velocityX = velocityX;
         this.velocityY = velocityY;
         initBallObjectImage();
+        balls = new ArrayList<Ball>();
     }
 
     private void initBallObjectImage() {
@@ -53,4 +56,11 @@ public class Ball extends GameObject {
         return 0;
     }
 
+    public ArrayList<Ball> getBalls() {
+        return balls;
+    }
+
+    public void setBalls(ArrayList<Ball> balls) {
+        this.balls = balls;
+    }
 }
