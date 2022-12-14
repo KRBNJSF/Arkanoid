@@ -2,6 +2,7 @@
 
 ## Needs to be fixed:
 - **Side collision**
+- **Overall collision - sometimes the ball goes through the platform**
 
 ## Needs to be added:
 - **Levels via 2D array**
