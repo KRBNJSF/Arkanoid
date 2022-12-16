@@ -289,9 +289,15 @@ public class EventHandler {
         for (int y = 0; y < blocks.get(0).getRows(); y++) {
             for (int x = 0; x < blocks.get(0).getColumns(); x++) {
                 colorAdjust.setHue(new Random().nextDouble(1) - 1);
+
                 blocks.get(iterations).getImageView().setEffect(colorAdjust);
+                blocks.get(iterations).getImageView().setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                blocks.get(iterations).getImageView().setY(y * blocks.get(iterations).getHeight());
+                blocks.get(iterations).getImageView().setImage(blocks.get(iterations).getImage());
+
                 blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
                 blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
+
                 if (lives >= 6 && level > 1) {
                     blocks.get(iterations).setAlive(Utils.getRandomBoolean());
                 }
@@ -302,6 +308,12 @@ public class EventHandler {
                 }
                 iterations++;
             }
+        }
+    }
+
+    private void initArray() {
+        for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
+            blocks.add(new Block(7, 7));
         }
     }
 
@@ -320,6 +332,13 @@ public class EventHandler {
 
     }
 
+    private void initLevel() {
+        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
+        }
+    }
+
+
     private void setBlockLevelState() {
         for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
             for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
@@ -333,23 +352,6 @@ public class EventHandler {
         }
     }
 
-
-    private void initLevel() {
-        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
-            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
-        }
-    }
-
-    private void initArray() {
-        for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-            blocks.add(new Block(7, 7));
-        }
-    }
-
-    private void addToScore() {
-        player.setScore(player.getScore() + 100);
-    }
-
     public void gameWin() {
         view.isRunning = false;
         if (player.getScore() > 0) {
@@ -357,6 +359,10 @@ public class EventHandler {
             level++;
         }
         resetValues();
+    }
+
+    private void addToScore() {
+        player.setScore(player.getScore() + 100);
     }
 
     //RESTARTS

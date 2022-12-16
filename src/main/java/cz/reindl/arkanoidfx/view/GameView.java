@@ -67,7 +67,11 @@ public class GameView extends Application implements Initializable {
 
         root = new StackPane(canvas);
         // FIXME: 16.12.2022 Block color change
-        root.getChildren().addAll(handler.blocks.get(0).getImageView(), handler.blocks.get(1).getImageView(), handler.blocks.get(2).getImageView());
+        int index = 0;
+        while (index < Settings.NUMBER_OF_BLOCKS) {
+            root.getChildren().addAll(handler.blocks.get(index).getImageView());
+            index++;
+        }
 
         Scene scene = new Scene(root);
         scene.setCursor(Cursor.NONE);
@@ -226,7 +230,6 @@ public class GameView extends Application implements Initializable {
         gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
         //gc.setFont(Font.font(text.getText(), 40));
         gc.strokeText(text.getText() + String.valueOf(handler.player.getScore()), 70, 60);
-
     }
 
     @Override
