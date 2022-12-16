@@ -287,7 +287,7 @@ public class GameView extends Application implements Initializable {
         }
 
         if (handler.interval.isCanDo() && handler.isOK) {
-            handler.player.setY(handler.player.getY() - 5);
+            handler.player.setY(Settings.DEFAULT_PLAYER_Y);
             handler.isOK = false;
         }
     }

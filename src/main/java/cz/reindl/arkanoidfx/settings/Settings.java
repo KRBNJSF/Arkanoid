@@ -20,6 +20,7 @@ public abstract class Settings {
 
     //PLAYER
     public static double DEFAULT_PLAYER_X;
+    public static double DEFAULT_PLAYER_Y;
     public static int DEFAULT_SCORE = 0;
     public static int DEFAULT_PLAYER_LIVES = 2;
 

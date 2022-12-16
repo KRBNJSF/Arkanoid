@@ -106,6 +106,7 @@ public class EventHandler {
         Settings.DEFAULT_BALL_X = player.getX() + player.getWidth() / 2 - ball.getWidth() / 2; //ball.getX();
         Settings.DEFAULT_BALL_Y = Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3; //ball.getY();
         Settings.DEFAULT_PLAYER_X = Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2; //player.getX();
+        Settings.DEFAULT_PLAYER_Y = Settings.SCREEN_HEIGHT - player.getWidth() / 2; //player.getY();
     }
 
     public void moveAIPlayer() {
