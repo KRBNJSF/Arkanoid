@@ -38,8 +38,8 @@ public abstract class GameObject {
         return skins[new Random().nextInt(bound)];
     }
 
-    public Rectangle2D getRect() {
-        return new Rectangle2D(x, y, width, height);
+    public Rectangle getRect() {
+        return new Rectangle(x, y, width, height);
     }
 
     public double getX() {

@@ -29,7 +29,7 @@ public class Ball extends GameObject {
     }
 
     public double getBallRect() {
-        return getRect().getMaxX();
+        return getRect().getX() + getWidth();
     }
 
     public int getVelocityX() {

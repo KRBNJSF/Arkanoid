@@ -43,7 +43,7 @@ public class Player extends GameObject {
     }
 
     public double getPlayerRect(double range) {
-        return getRect().getMinX() + range;
+        return getRect().getX() + range;
     }
 
     public int getScore() {
