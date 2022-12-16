@@ -1,5 +1,6 @@
 package cz.reindl.arkanoidfx.entity;
 
+import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
@@ -37,8 +38,8 @@ public abstract class GameObject {
         return skins[new Random().nextInt(bound)];
     }
 
-    public Rectangle getRect() {
-        return new Rectangle(x, y, width, height);
+    public Rectangle2D getRect() {
+        return new Rectangle2D(x, y, width, height);
     }
 
     public double getX() {

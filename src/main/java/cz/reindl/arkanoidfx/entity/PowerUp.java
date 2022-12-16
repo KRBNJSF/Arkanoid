@@ -20,7 +20,7 @@ public class PowerUp extends GameObject {
     }
 
     public double getPowerUpRect() {
-        return getRect().getX() + getWidth();
+        return getRect().getMaxX();
     }
 
     public int getVelocityX() {
