@@ -419,6 +419,7 @@ public class EventHandler {
 
         Robot robot = new Robot();
         robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
+        //player.setX(Settings.DEFAULT_PLAYER_X);
     }
 
 }
