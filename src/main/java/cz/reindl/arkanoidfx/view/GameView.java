@@ -3,6 +3,7 @@ package cz.reindl.arkanoidfx.view;
 import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.event.EventHandler;
+import cz.reindl.arkanoidfx.utils.Interval;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -13,10 +14,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
 import javafx.scene.text.*;
@@ -36,8 +39,10 @@ public class GameView extends Application implements Initializable {
     public int lastScore = 0;
     private Rectangle2D screenSize;
     private EventHandler handler;
+    private Image backgroundImg = new Image("background.png");
     GraphicsContext gc;
     Canvas canvas;
+    StackPane root;
 
     //Font font = new Font("verdana", 40);
     Text text = new Text("Score: ");
@@ -50,6 +55,8 @@ public class GameView extends Application implements Initializable {
         Settings.SCREEN_HEIGHT = screenSize.getHeight();
 
         handler = new EventHandler(this);
+        handler.interval = new Interval(1000);
+        handler.interval.start();
 
         canvas = new Canvas(Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -58,7 +65,11 @@ public class GameView extends Application implements Initializable {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        Scene scene = new Scene(new Pane(canvas));
+        root = new StackPane(canvas);
+        // FIXME: 16.12.2022 Block color change
+        root.getChildren().addAll(handler.blocks.get(0).getImageView(), handler.blocks.get(1).getImageView(), handler.blocks.get(2).getImageView());
+
+        Scene scene = new Scene(root);
         scene.setCursor(Cursor.NONE);
 
         stage.setTitle("ArkanoidFX");
@@ -144,6 +155,8 @@ public class GameView extends Application implements Initializable {
     private void invalidateView(GraphicsContext gc) {
         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
 
+        // FIXME: 16.12.2022 gc.drawImage(backgroundImg, 0, 0);
+
         gc.setFill(Color.BEIGE);
         gc.fillRect(0, 0, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
         gc.setStroke(Color.BLACK);
@@ -213,6 +226,7 @@ public class GameView extends Application implements Initializable {
         gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
         //gc.setFont(Font.font(text.getText(), 40));
         gc.strokeText(text.getText() + String.valueOf(handler.player.getScore()), 70, 60);
+
     }
 
     @Override

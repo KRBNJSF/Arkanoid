@@ -6,13 +6,13 @@ import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.sound.Music;
 import cz.reindl.arkanoidfx.sound.Sound;
+import cz.reindl.arkanoidfx.utils.Interval;
 import cz.reindl.arkanoidfx.utils.Utils;
 import cz.reindl.arkanoidfx.view.GameView;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.robot.Robot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class EventHandler {
@@ -20,6 +20,7 @@ public class EventHandler {
     GameView view;
     Boosts boosts = new Boosts(this);
     public Sound sound = new Sound(this);
+    public Interval interval;
 
     public Player player;
     public Ball ball;
@@ -33,6 +34,7 @@ public class EventHandler {
     public int level = 1;
     public int ballCount = 0;
     public boolean isLevel;
+    private int lineWidth = 10;
     public int allWidth = 0;
     public int allHeight = 0;
 
@@ -48,7 +50,7 @@ public class EventHandler {
     //INITIALIZATION
     private void initGameObjects() {
         colorAdjust = new ColorAdjust();
-        colorAdjust.setHue(100);
+        colorAdjust.setHue(-.5);
 
         player = new Player(Settings.DEFAULT_SCORE, Settings.DEFAULT_PLAYER_LIVES, 5);
         player.setX(Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2);
@@ -67,7 +69,7 @@ public class EventHandler {
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
         // FIXME: 15.12.2022
 
-        isLevel = true;
+        isLevel = false;
         if (isLevel) {
             printLevel(0);
         } else {
@@ -114,16 +116,16 @@ public class EventHandler {
                 }
                 return;
             }
-            if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
+            if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) { //lineWidth for bg image
                 balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
                 sound.playSoundEffect(Music.wallHit, false);
             }
-            if (balls.get(i).getX() <= 0) {
+            if (balls.get(i).getX() <= 0) { //lineWidth for bg image
                 balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
                 sound.playSoundEffect(Music.wallHit, false);
             }
-            if (balls.get(i).getY() <= 0) {
-                balls.get(i).setY(10);
+            if (balls.get(i).getY() <= 0) { //lineWidth for bg image
+                balls.get(i).setY(10); //lineWidth + 15 for bg image
                 balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
                 sound.playSoundEffect(Music.wallHit, false);
             } else {
@@ -131,14 +133,22 @@ public class EventHandler {
             }
             balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
             balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
+            player.setY(player.getY());
         }
     }
 
     public void checkBallCollision() {
         for (Ball ballValue : balls) {
-            if (ballValue.getRect().intersects(player.getRect().getBoundsInParent())) {
+            if (ballValue.getRect().intersects(player.getRect())) {
 
                 sound.playSoundEffect(Music.platformHit, false);
+
+                /*if (interval.isReady()) {
+                    interval.done();
+                    player.setY(player.getY() - 20);
+                } else if (!interval.isReady()) {
+                    player.setY(player.getY() + 20);
+                }*/
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 5)) {
                     ballValue.setVelocityY(ballValue.getVelocityY() * -1);
@@ -196,7 +206,7 @@ public class EventHandler {
     public void checkBlockCollision() {
         for (Block block : blocks) {
             for (Ball ballValue : balls) {
-                if (ballValue.getRect().intersects(block.getRect().getBoundsInParent()) && block.getLives() > 0 && block.isAlive() && block.getX() != 0) {
+                if (ballValue.getRect().intersects(block.getRect()) && block.getLives() > 0 && block.isAlive() && block.getX() != 0) {
                     addToScore();
                     if (new Random().nextInt(2) == 1 && !powerUp.isVisible()) {
                         powerUp.setX(block.getX() + block.getWidth() / 2);
@@ -252,7 +262,7 @@ public class EventHandler {
 
     //POWER UP UTILITIES
     private void checkPowerUpCollision() {
-        if (player.getRect().getBoundsInParent().intersects(powerUp.getRect().getBoundsInParent()) && powerUp.isVisible()) {
+        if (player.getRect().intersects(powerUp.getRect()) && powerUp.isVisible()) {
             sound.playSoundEffect(Music.powerUpHit, false);
             switch (Utils.getRandomNumber(4, 0)) { // FIXME: 13.12.2022 Add more power ups and change percentage
                 case 0 -> boosts.boost1();
@@ -278,6 +288,8 @@ public class EventHandler {
     private void printArray(int iterations) {
         for (int y = 0; y < blocks.get(0).getRows(); y++) {
             for (int x = 0; x < blocks.get(0).getColumns(); x++) {
+                colorAdjust.setHue(new Random().nextDouble(1) - 1);
+                blocks.get(iterations).getImageView().setEffect(colorAdjust);
                 blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
                 blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
                 if (lives >= 6 && level > 1) {
