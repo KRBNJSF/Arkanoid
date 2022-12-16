@@ -1,5 +1,6 @@
 package cz.reindl.arkanoidfx.view;
 
+import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.event.EventHandler;
 import javafx.animation.KeyFrame;
@@ -164,9 +165,20 @@ public class GameView extends Application implements Initializable {
             }
         }*/
 
-        if (!handler.reset) {
+        if (!handler.reset && !handler.isLevel) {
             for (int y = 0; y < handler.blocks.get(0).getRows(); y++) {
                 for (int x = 0; x < handler.blocks.get(0).getColumns(); x++) {
+                    gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
+                    iterations++;
+                }
+            }
+        }
+
+        if (handler.isLevel) {
+            for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
+                for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
+                    System.out.println(Level.LEVEL1.getLevel().length);
+                    System.out.println(Level.LEVEL1.getLevel()[y][x]);
                     gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
                     iterations++;
                 }

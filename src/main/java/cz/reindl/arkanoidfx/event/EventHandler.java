@@ -32,6 +32,7 @@ public class EventHandler {
     public double blockPosX, blockPosY;
     public int level = 1;
     public int ballCount = 0;
+    public boolean isLevel;
     public int allWidth = 0;
     public int allHeight = 0;
 
@@ -65,9 +66,14 @@ public class EventHandler {
 
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
         // FIXME: 15.12.2022
-        //  printLevel(0);
-        initArray();
-        printArray(0);
+
+        isLevel = true;
+        if (isLevel) {
+            printLevel(0);
+        } else {
+            initArray();
+            printArray(0);
+        }
 
         // FIXME: 09.12.2022 Dynamic Blocks
         /*for (int y = 0; y < blocks.get(0).getRows(); y++) {
@@ -289,26 +295,36 @@ public class EventHandler {
 
     private void printLevel(int iterations) {
 
-        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
-            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
-        }
+        initLevel();
 
         for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
             for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
-                for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
-                    for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
-                        if (Level.LEVEL1.getLevel()[i][j] == '_') {
-                            blocks.get(i).setAlive(false);
-                            blocks.get(i).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                            blocks.get(i).setLives(0);
-                            lives--;
-                        }
-                    }
-                }
-                blocks.get(x).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(x).getWidth()));
-                blocks.get(y).setY(y * blocks.get(y).getHeight());
+                setBlockLevelState();
+                blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                blocks.get(iterations).setY(iterations * blocks.get(iterations).getHeight());
                 iterations++;
             }
+        }
+
+    }
+
+    private void setBlockLevelState() {
+        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+            for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
+                if (Level.LEVEL1.getLevel()[i][j] == '_') {
+                    blocks.get(i).setAlive(false);
+                    blocks.get(i).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
+                    blocks.get(i).setLives(0);
+                    lives--;
+                }
+            }
+        }
+    }
+
+
+    private void initLevel() {
+        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
         }
     }
 
