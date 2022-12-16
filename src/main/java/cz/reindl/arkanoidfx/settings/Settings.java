@@ -5,6 +5,7 @@ public abstract class Settings {
     //SCREEN DIMENSIONS
     public static double SCREEN_WIDTH;
     public static double SCREEN_HEIGHT;
+    public static final int BOUND_WIDTH = 10;
 
     //BLOCKS
     public static int NUMBER_OF_BLOCKS = 49;
@@ -32,22 +33,22 @@ public abstract class Settings {
             {'_', '_', '_', '_', '_', '_'},
     };
 
-    public static String[][] LEVEL_2 = {
-            {"x", "x", "x", "x", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"_", "_", "_", "_", "_", "_"},
-            {"_", "_", "_", "_", "_", "_"},
+    public static char[][] LEVEL_2 = {
+            {'x', 'x', 'x', 'x', 'x', 'x'},
+            {'x', 'x', 'x', 'x', 'x', 'x'},
+            {'x', 'x', 'x', 'x', 'x', 'x'},
+            {'x', 'x', '_', '_', 'x', 'x'},
+            {'x', 'x', '_', '_', 'x', 'x'},
+            {'x', 'x', '_', '_', 'x', 'x'},
     };
 
     public static String[][] LEVEL_3 = {
             {"x", "x", "x", "x", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"x", "x", "_", "_", "x", "x"},
-            {"_", "_", "_", "_", "_", "_"},
-            {"_", "_", "_", "_", "_", "_"},
+            {"x", "x", "x", "x", "x", "x"},
+            {"x", "x", "x", "x", "x", "x"},
+            {"x", "x", "x", "x", "x", "x"},
+            {"x", "_", "x", "x", "_", "x"},
+            {"x", "_", "x", "x", "_", "x"},
     };
 
 }

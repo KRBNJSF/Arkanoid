@@ -8,8 +8,12 @@ public class Utils {
         return new Random().nextBoolean();
     }
 
-    public static int getRandomNumber(int bound, int startPoint) {
-        return new Random().nextInt(bound) + startPoint;
+    public static int getRandomIntegerNumber(int startPoint, int bound) {
+        return new Random().nextInt(startPoint, bound);
+    }
+
+    public static double getRandomDoubleNumber(double startPoint, double bound) {
+        return new Random().nextDouble(startPoint, bound);
     }
 
 }

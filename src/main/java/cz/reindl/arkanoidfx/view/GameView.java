@@ -1,11 +1,12 @@
 package cz.reindl.arkanoidfx.view;
 
+import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.event.EventHandler;
+import cz.reindl.arkanoidfx.utils.Interval;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
@@ -16,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.robot.Robot;
 import javafx.scene.text.*;
@@ -28,7 +30,6 @@ import java.util.ResourceBundle;
 
 public class GameView extends Application implements Initializable {
 
-    public static Stage stage;
     public Timeline timeline;
     public boolean isRunning, isPaused;
     public boolean isWin;
@@ -37,9 +38,12 @@ public class GameView extends Application implements Initializable {
     private EventHandler handler;
     GraphicsContext gc;
     Canvas canvas;
+    StackPane root;
+    Stage currentStage;
+    Scene currentScene;
 
-    //Font font = new Font("verdana", 40);
-    Text text = new Text("Score: ");
+    Font font = new Font("verdana", 40);
+    Text scoreValueText = new Text("Score: ");
 
     public void start(Stage stage) throws Exception {
 
@@ -49,6 +53,8 @@ public class GameView extends Application implements Initializable {
         Settings.SCREEN_HEIGHT = screenSize.getHeight();
 
         handler = new EventHandler(this);
+        handler.interval = new Interval(1000);
+        handler.interval.start();
 
         canvas = new Canvas(Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -57,14 +63,18 @@ public class GameView extends Application implements Initializable {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        Scene scene = new Scene(new Pane(canvas));
+        root = new StackPane(canvas);
+        randomBlockColor();
+
+        Scene scene = new Scene(new Pane(canvas)); //When everything is fixed, add root as a parameter
         scene.setCursor(Cursor.NONE);
+        currentScene = scene;
 
         stage.setTitle("ArkanoidFX");
         stage.setFullScreen(true);
         stage.setScene(scene);
-        GameView.stage = stage;
         stage.show();
+        currentStage = stage;
 
         canvas.setOnMouseMoved(mouseEvent -> {
             if (mouseEvent.getX() <= Settings.SCREEN_WIDTH - handler.player.getWidth()) {
@@ -140,43 +150,27 @@ public class GameView extends Application implements Initializable {
 
     }
 
+    private void randomBlockColor() {
+        // FIXME: 16.12.2022 Block color change
+        int index = 0;
+        while (index < Settings.NUMBER_OF_BLOCKS) {
+            root.getChildren().addAll(handler.blocks.get(index).getImageView());
+            index++;
+        }
+    }
+
     private void invalidateView(GraphicsContext gc) {
-        text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        textInitialization();
 
-        gc.setFill(Color.BEIGE);
-        gc.fillRect(0, 0, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
-        gc.setStroke(Color.BLACK);
-        gc.setTextAlign(TextAlignment.CENTER);
+        //RENDERING
+        backgroundRender();
+        randomLevelRender(0);
+        staticLevelRender(0);
+        ballRender();
+        playerRender();
+        powerUpRender();
 
-        //gc.setFill(Color.BLACK);
-        //gc.setFont(Font.font(40));
-
-        int iterations = 0;
-        /*for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-            gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + i * handler.blocks.get(i).getWidth() - 100, handler.blocks.get(i).getHeight());
-            if (i * handler.blocks.get(i).getWidth() <= Settings.SCREEN_WIDTH / 2) {
-                gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + i * handler.blocks.get(i).getWidth() - 100, handler.blocks.get(i).getHeight() * i);
-            } else if (i * handler.blocks.get(i).getWidth() >= Settings.SCREEN_WIDTH / 2) {
-                iterations++;
-            } else {
-                handler.blocks.get(i).setX(50);
-                gc.drawImage(handler.blocks.get(i).getImage(), handler.blocks.get(i).getX() + iterations * handler.blocks.get(i).getWidth(), iterations * handler.blocks.get(i).getHeight() + 10 * i);
-            }
-        }*/
-
-        if (!handler.reset) {
-            for (int y = 0; y < handler.blocks.get(0).getRows(); y++) {
-                for (int x = 0; x < handler.blocks.get(0).getColumns(); x++) {
-                    gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
-                    iterations++;
-                }
-            }
-        }
-
-        for (int i = 0; i < handler.balls.size(); i++) {
-            gc.drawImage(handler.balls.get(i).getImage(), handler.balls.get(i).getX(), handler.balls.get(i).getY(), handler.ball.getWidth(), handler.ball.getHeight());
-        }
-
+        //ANIMATIONS
         if (isRunning) {
             handler.moveBall();
             handler.checkBallCollision();
@@ -188,20 +182,81 @@ public class GameView extends Application implements Initializable {
         } else if (!isWin) {
             gc.strokeText("PAUSED", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
-        if (handler.player.getLives() >= 0) {
-            gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()) + "\n Level: " + handler.level, Settings.SCREEN_WIDTH - 100, 60);
+
+        scoreText();
+        winText();
+    }
+
+    //BACKGROUND
+    private void backgroundRender() {
+        // FIXME: 16.12.2022 gc.drawImage(backgroundImg, 0, 0);
+        gc.setFill(Color.BEIGE);
+        gc.fillRect(0, 0, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
+    }
+
+    //OBJECTS
+    private void staticLevelRender(int iterations) {
+        if (handler.isStaticLevel) {
+            for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
+                for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
+                    System.out.println(Level.LEVEL1.getLevel().length);
+                    System.out.println(Level.LEVEL1.getLevel()[y][x]);
+                    gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
+                    iterations++;
+                }
+            }
         }
+    }
+
+    private void randomLevelRender(int iterations) {
+        if (!handler.reset && !handler.isStaticLevel) {
+            for (int y = 0; y < handler.blocks.get(0).getRows(); y++) {
+                for (int x = 0; x < handler.blocks.get(0).getColumns(); x++) {
+                    gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
+                    iterations++;
+                }
+            }
+        }
+    }
+
+
+    private void playerRender() {
+        gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
+    }
+
+    private void ballRender() {
+        for (int i = 0; i < handler.balls.size(); i++) {
+            gc.drawImage(handler.balls.get(i).getImage(), handler.balls.get(i).getX(), handler.balls.get(i).getY(), handler.ball.getWidth(), handler.ball.getHeight());
+        }
+    }
+
+    private void powerUpRender() {
+        if (handler.powerUp.isVisible()) {
+            gc.drawImage(handler.powerUp.getImage(), handler.powerUp.getX(), handler.powerUp.getY(), handler.powerUp.getWidth(), handler.powerUp.getHeight());
+        }
+    }
+
+    //TEXT
+    private void textInitialization() {
+        scoreValueText.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        gc.setStroke(Color.BLACK);
+        gc.setTextAlign(TextAlignment.CENTER);
+    }
+
+    private void winText() {
         if (isWin) {
             gc.strokeText("You won \n Score: " + lastScore + "\n Level: " + handler.level, Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
             handler.gameWin();
         }
-        if (handler.powerUp.isVisible()) {
-            gc.drawImage(handler.powerUp.getImage(), handler.powerUp.getX(), handler.powerUp.getY(), handler.powerUp.getWidth(), handler.powerUp.getHeight());
-        }
-        gc.drawImage(handler.player.getImage(), handler.player.getX(), handler.player.getY(), handler.player.getWidth(), handler.player.getHeight());
-        //gc.setFont(Font.font(text.getText(), 40));
-        gc.strokeText(text.getText() + String.valueOf(handler.player.getScore()), 70, 60);
     }
+
+    private void scoreText() {
+        if (handler.player.getLives() >= 0) {
+            gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()) + "\n Level: " + handler.level, Settings.SCREEN_WIDTH - 100, 60);
+        }
+        gc.strokeText(scoreValueText.getText() + String.valueOf(handler.player.getScore()), 70, 60);
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

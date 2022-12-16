@@ -6,13 +6,13 @@ import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.sound.Music;
 import cz.reindl.arkanoidfx.sound.Sound;
+import cz.reindl.arkanoidfx.utils.Interval;
 import cz.reindl.arkanoidfx.utils.Utils;
 import cz.reindl.arkanoidfx.view.GameView;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.robot.Robot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
 public class EventHandler {
@@ -20,6 +20,7 @@ public class EventHandler {
     GameView view;
     Boosts boosts = new Boosts(this);
     public Sound sound = new Sound(this);
+    public Interval interval;
 
     public Player player;
     public Ball ball;
@@ -27,13 +28,16 @@ public class EventHandler {
     public ArrayList<Block> blocks;
     public ArrayList<Ball> balls;
 
-    public boolean reset;
-    public int lives = Settings.NUMBER_OF_BLOCKS;
-    public double blockPosX, blockPosY;
+    public int blockLives = Settings.NUMBER_OF_BLOCKS;
     public int level = 1;
     public int ballCount = 0;
-    public int allWidth = 0;
-    public int allHeight = 0;
+    public double blockPosX, blockPosY;
+
+    public boolean reset;
+    public boolean isStaticLevel;
+
+    private int allWidth = 0;
+    private int allHeight = 0;
 
     ColorAdjust colorAdjust;
 
@@ -47,7 +51,7 @@ public class EventHandler {
     //INITIALIZATION
     private void initGameObjects() {
         colorAdjust = new ColorAdjust();
-        colorAdjust.setHue(100);
+        colorAdjust.setHue(-.5);
 
         player = new Player(Settings.DEFAULT_SCORE, Settings.DEFAULT_PLAYER_LIVES, 5);
         player.setX(Settings.SCREEN_WIDTH / 2 - player.getWidth() / 2);
@@ -56,18 +60,20 @@ public class EventHandler {
         ball = new Ball(0, -7);
         ball.setX(player.getX() + player.getWidth() / 2 - ball.getWidth() / 2);
         ball.setY(Settings.SCREEN_HEIGHT - (2 * ball.getHeight() + player.getHeight() + 15) - ball.getHeight() / 3);
-
         balls = new ArrayList<Ball>();
-
         balls.add(ball);
 
         powerUp = new PowerUp(0, 5);
 
         blocks = new ArrayList<>(Settings.NUMBER_OF_BLOCKS);
-        // FIXME: 15.12.2022
-        //  printLevel(0);
-        initArray();
-        printArray(0);
+
+        isStaticLevel = false;
+        if (isStaticLevel) {
+            printStaticLevel(0);
+        } else {
+            initArray();
+            printArray(0);
+        }
 
         // FIXME: 09.12.2022 Dynamic Blocks
         /*for (int y = 0; y < blocks.get(0).getRows(); y++) {
@@ -108,23 +114,25 @@ public class EventHandler {
                 }
                 return;
             }
-            if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
-                balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
-                sound.playSoundEffect(Music.wallHit, false);
+            if (ballCount >= 0) {
+                if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
+                    balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                    sound.playSoundEffect(Music.wallHit, false);
+                }
+                if (balls.get(i).getX() <= 0) {   //Settings.BOUND_WIDTH for bg image
+                    balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                    sound.playSoundEffect(Music.wallHit, false);
+                }
+                if (balls.get(i).getY() <= 0) {   //Settings.BOUND_WIDTH for bg image
+                    balls.get(i).setY(10);        //(Settings.BOUND_WIDTH + 5) for bg image
+                    balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                    sound.playSoundEffect(Music.wallHit, false);
+                } else {
+                    balls.get(i).setVelocityX(balls.get(i).getVelocityX());
+                }
+                balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
+                balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
             }
-            if (balls.get(i).getX() <= 0) {
-                balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
-                sound.playSoundEffect(Music.wallHit, false);
-            }
-            if (balls.get(i).getY() <= 0) {
-                balls.get(i).setY(10);
-                balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
-                sound.playSoundEffect(Music.wallHit, false);
-            } else {
-                balls.get(i).setVelocityX(balls.get(i).getVelocityX());
-            }
-            balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
-            balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
         }
     }
 
@@ -152,7 +160,7 @@ public class EventHandler {
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.66) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 2.5)) {
                     ballValue.setVelocityY(ball.getVelocityY() * -1);
-                    ballValue.setVelocityX(Utils.getRandomNumber(3, -1));
+                    ballValue.setVelocityX(Utils.getRandomIntegerNumber(-1, 3));
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.25) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 1.66)) {
@@ -232,14 +240,14 @@ public class EventHandler {
     }
 
     public void checkBlockState() {
-        if (lives <= 0) {
+        if (blockLives <= 0) {
             view.isWin = true;
             sound.playSoundEffect(Music.gameWinSound, false);
         }
         for (Block block : blocks) {
             if (block.getLives() == 0 && block.isAlive()) {
                 block.setAlive(false);
-                lives--;
+                blockLives--;
             }
         }
     }
@@ -248,7 +256,7 @@ public class EventHandler {
     private void checkPowerUpCollision() {
         if (player.getRect().getBoundsInParent().intersects(powerUp.getRect().getBoundsInParent()) && powerUp.isVisible()) {
             sound.playSoundEffect(Music.powerUpHit, false);
-            switch (Utils.getRandomNumber(4, 0)) { // FIXME: 13.12.2022 Add more power ups and change percentage
+            switch (Utils.getRandomIntegerNumber(0, 4)) { // FIXME: 13.12.2022 Add more power ups and change percentage
                 case 0 -> boosts.boost1();
                 case 1 -> boosts.boost2(blockPosX, blockPosY);
                 default -> {
@@ -272,41 +280,23 @@ public class EventHandler {
     private void printArray(int iterations) {
         for (int y = 0; y < blocks.get(0).getRows(); y++) {
             for (int x = 0; x < blocks.get(0).getColumns(); x++) {
+                colorAdjust.setHue(Utils.getRandomDoubleNumber(-1, 1));
+
+                blocks.get(iterations).getImageView().setEffect(colorAdjust);
+                blocks.get(iterations).getImageView().setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                blocks.get(iterations).getImageView().setY(y * blocks.get(iterations).getHeight());
+                blocks.get(iterations).getImageView().setImage(blocks.get(iterations).getImage());
+
                 blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
                 blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
-                if (lives >= 6 && level > 1) {
+                if (blockLives >= 6 && level > 1) {
                     blocks.get(iterations).setAlive(Utils.getRandomBoolean());
                 }
                 if (!blocks.get(iterations).isAlive()) {
                     blocks.get(iterations).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
                     blocks.get(iterations).setLives(0);
-                    lives--;
+                    blockLives--;
                 }
-                iterations++;
-            }
-        }
-    }
-
-    private void printLevel(int iterations) {
-
-        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
-            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
-        }
-
-        for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
-            for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
-                for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
-                    for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
-                        if (Level.LEVEL1.getLevel()[i][j] == '_') {
-                            blocks.get(i).setAlive(false);
-                            blocks.get(i).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                            blocks.get(i).setLives(0);
-                            lives--;
-                        }
-                    }
-                }
-                blocks.get(x).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(x).getWidth()));
-                blocks.get(y).setY(y * blocks.get(y).getHeight());
                 iterations++;
             }
         }
@@ -318,8 +308,37 @@ public class EventHandler {
         }
     }
 
-    private void addToScore() {
-        player.setScore(player.getScore() + 100);
+    private void printStaticLevel(int iterations) {
+
+        initStaticLevel();
+
+        for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
+            for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
+                setStaticLevelBlockState();
+                blocks.get(x).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(x).getWidth()));
+                blocks.get(y).setY(y * blocks.get(y).getHeight());
+                iterations++;
+            }
+        }
+    }
+
+    private void initStaticLevel() {
+        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+            blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
+        }
+    }
+
+    private void setStaticLevelBlockState() {
+        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+            for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
+                if (Level.LEVEL1.getLevel()[i][j] == '_') {
+                    blocks.get(i).setAlive(false);
+                    blocks.get(i).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
+                    blocks.get(i).setLives(0);
+                    blockLives--;
+                }
+            }
+        }
     }
 
     public void gameWin() {
@@ -329,6 +348,10 @@ public class EventHandler {
             level++;
         }
         resetValues();
+    }
+
+    private void addToScore() {
+        player.setScore(player.getScore() + 100);
     }
 
     //RESTARTS
@@ -349,10 +372,10 @@ public class EventHandler {
             player.setLives(Settings.DEFAULT_PLAYER_LIVES);
 
             blocks.clear();
-            int ranX = Utils.getRandomNumber(5, 3);
-            int ranY = Utils.getRandomNumber(5, 3);
+            int ranX = Utils.getRandomIntegerNumber(3, 5);
+            int ranY = Utils.getRandomIntegerNumber(3, 5);
             Settings.NUMBER_OF_BLOCKS = ranX * ranY;
-            lives = Settings.NUMBER_OF_BLOCKS;
+            blockLives = Settings.NUMBER_OF_BLOCKS;
 
             initArray();
             blocks.get(0).setColumns(ranY);
