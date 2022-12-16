@@ -81,7 +81,7 @@ public class GameView extends Application implements Initializable {
                 if (isPaused) {
                     Robot robot = new Robot();
                     robot.mouseMove(handler.player.getX(), Settings.SCREEN_HEIGHT / 2);
-                } else {
+                } else if (!handler.isAi) {
                     handler.player.setX(mouseEvent.getX());
                     if (!isRunning) {
                         handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
@@ -129,6 +129,12 @@ public class GameView extends Application implements Initializable {
                     handler.sound.isPlayable = true;
                 }
             }
+            if (keyEvent.getCode() == KeyCode.M) {
+                handler.sound.isPlayable = !handler.sound.isPlayable;
+            }
+            if (keyEvent.getCode() == KeyCode.U) {
+                handler.isAi = !handler.isAi;
+            }
 
             //TEST
             if (keyEvent.getCode() == KeyCode.SPACE) {
@@ -172,6 +178,7 @@ public class GameView extends Application implements Initializable {
 
         //ANIMATIONS
         if (isRunning) {
+            handler.moveAIPlayer();
             handler.moveBall();
             handler.checkBallCollision();
             handler.checkBlockState();
@@ -185,6 +192,8 @@ public class GameView extends Application implements Initializable {
 
         scoreText();
         winText();
+        checkEvent();
+
     }
 
     //BACKGROUND
@@ -255,6 +264,53 @@ public class GameView extends Application implements Initializable {
             gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()) + "\n Level: " + handler.level, Settings.SCREEN_WIDTH - 100, 60);
         }
         gc.strokeText(scoreValueText.getText() + String.valueOf(handler.player.getScore()), 70, 60);
+    }
+
+    //OTHERS
+    private void checkEvent() {
+        boolean isFreeze = false;
+        if (isFreeze) {
+            sideCollisionFreeze();
+        } else {
+            platformAnim();
+        }
+    }
+
+    private void platformAnim() {
+        handler.interval.setInterval(35);
+        if (handler.interval.isReady() && handler.isAnim) {
+            handler.player.setY(handler.player.getY() + 5);
+            //handler.interval.done();
+            handler.isAnim = false;
+            handler.isOK = true;
+            handler.interval.setCanDo(false);
+        }
+
+        if (handler.interval.isCanDo() && handler.isOK) {
+            handler.player.setY(handler.player.getY() - 5);
+            handler.isOK = false;
+        }
+    }
+
+    private void sideCollisionFreeze() {
+        handler.interval.setInterval(1000);
+        if (handler.interval.isReady() && handler.isSide) {
+            isPaused = true;
+            isRunning = false;
+            //handler.interval.done();
+            handler.isSide = false;
+            handler.isFrozen = true;
+            handler.interval.setCanDo(false);
+        }
+
+        if (handler.interval.isCanDo() && handler.isFrozen) {
+            isPaused = false;
+            isRunning = true;
+            handler.isFrozen = false;
+        }
+
+        //isRunning = !isPaused;
+
     }
 
 

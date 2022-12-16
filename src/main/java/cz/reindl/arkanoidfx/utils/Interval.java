@@ -53,4 +53,12 @@ public class Interval extends Thread {
     public void setInterval(int interval) {
         this.interval = interval;
     }
+
+    public boolean isCanDo() {
+        return canDo;
+    }
+
+    public void setCanDo(boolean canDo) {
+        this.canDo = canDo;
+    }
 }
