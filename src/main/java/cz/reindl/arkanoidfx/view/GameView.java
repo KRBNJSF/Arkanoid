@@ -3,6 +3,7 @@ package cz.reindl.arkanoidfx.view;
 import cz.reindl.arkanoidfx.settings.Level;
 import cz.reindl.arkanoidfx.settings.Settings;
 import cz.reindl.arkanoidfx.event.EventHandler;
+import cz.reindl.arkanoidfx.sound.Music;
 import cz.reindl.arkanoidfx.utils.Interval;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -83,6 +84,10 @@ public class GameView extends Application implements Initializable {
                     robot.mouseMove(handler.player.getX(), Settings.SCREEN_HEIGHT / 2);
                 } else if (!handler.isAi) {
                     handler.player.setX(mouseEvent.getX());
+                    /*handler.ball.setX(mouseEvent.getX());
+                    handler.ball.setY(mouseEvent.getY());
+                    handler.ball.setVelocityY(0);
+                    handler.ball.setVelocityX(0);*/
                     if (!isRunning) {
                         handler.ball.setX(handler.player.getX() + handler.player.getWidth() / 2 - handler.ball.getWidth() / 2);
                     }
@@ -206,10 +211,9 @@ public class GameView extends Application implements Initializable {
     //OBJECTS
     private void staticLevelRender(int iterations) {
         if (handler.isStaticLevel) {
-            for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
-                for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
-                    System.out.println(Level.LEVEL1.getLevel().length);
-                    System.out.println(Level.LEVEL1.getLevel()[y][x]);
+            for (int y = 0; y < handler.blocks.get(0).getRows(); y++) {
+                for (int x = 0; x < handler.blocks.get(0).getRows(); x++) {
+                    handler.blocks.get(iterations).getImageView().setImage(handler.blocks.get(iterations).getImage());
                     gc.drawImage(handler.blocks.get(iterations).getImage(), handler.blocks.get(iterations).getX(), handler.blocks.get(iterations).getY());
                     iterations++;
                 }
@@ -268,11 +272,11 @@ public class GameView extends Application implements Initializable {
 
     //OTHERS
     private void checkEvent() {
-        boolean isFreeze = false;
-        if (isFreeze) {
+        boolean isFrozen = false;
+        if (isFrozen) {
             sideCollisionFreeze();
         } else {
-            platformAnim();
+            platformAnim(); // FIXME: 17.12.2022 Broken bullshit
         }
     }
 

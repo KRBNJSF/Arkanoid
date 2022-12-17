@@ -55,7 +55,7 @@ public class EventHandler {
     public EventHandler(GameView view) {
         this.view = view;
         initGameObjects();
-        sound.currentMusic = Music.backgroundTheme;
+        sound.currentMusic = Music.backgroundTheme2;
         sound.playMusic(sound.currentMusic, true);
     }
 
@@ -87,6 +87,8 @@ public class EventHandler {
             printArray(0);
         }
 
+        blockPosY = blocks.get(Settings.NUMBER_OF_BLOCKS - 1).getY() + blocks.get(Settings.NUMBER_OF_BLOCKS - 1).getHeight();
+
         // FIXME: 09.12.2022 Dynamic Blocks
         /*for (int y = 0; y < blocks.get(0).getRows(); y++) {
             for (int x = 0; x < blocks.get(0).getColumns(); x++) {
@@ -116,7 +118,7 @@ public class EventHandler {
                 System.out.println("Random AI X: " + df.format(randomX));
                 isGenerated = true;
             }
-            player.setX(ball.getX() - (player.getWidth() / randomX));
+            player.setX(balls.get(0).getX() - (player.getWidth() / randomX));
         }
     }
 
@@ -156,8 +158,6 @@ public class EventHandler {
             }
             balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
             balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
-            //player.setY(player.getY());
-            //}
         }
     }
 
@@ -165,23 +165,17 @@ public class EventHandler {
         for (Ball ballValue : balls) {
             if (ballValue.getRect().intersects(player.getRect().getBoundsInParent())) {
 
+                if (ballValue.getVelocityY() > 0) {
+                    ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                }
+
                 ballValue.setY(Settings.DEFAULT_BALL_Y);
                 isGenerated = false;
 
                 sound.playSoundEffect(Music.platformHit, false);
                 isAnim = true;
 
-                // FIXME: 16.12.2022 Platform animation
-                /*if (interval.isReady()) {
-                    interval.done();
-                    player.setY(player.getY() - 20);
-                } else if (!interval.isReady()) {
-                    player.setY(player.getY() + 20);
-                }*/
-
-
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 5)) {
-                    ballValue.setVelocityY(ballValue.getVelocityY() * -1);
                     ballValue.setVelocityX(-6);
                     if (ballValue.getVelocityX() >= 0) {
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
@@ -189,7 +183,6 @@ public class EventHandler {
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 2.5) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 5)) {
-                    ballValue.setVelocityY(ballValue.getVelocityY() * -1);
                     ballValue.setVelocityX(-3);
                     if (ballValue.getVelocityX() >= 0) {
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
@@ -197,12 +190,10 @@ public class EventHandler {
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.66) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 2.5)) {
-                    ballValue.setVelocityY(ball.getVelocityY() * -1);
                     ballValue.setVelocityX(new Random().nextInt(3) - 1);
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.25) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 1.66)) {
-                    ballValue.setVelocityY(ball.getVelocityY() * -1);
                     ballValue.setVelocityX(4);
                     if (ballValue.getVelocityX() <= 0) {
                         ballValue.setVelocityX(-4);
@@ -211,7 +202,6 @@ public class EventHandler {
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() + 5) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 1.25)) {
-                    ballValue.setVelocityY(ballValue.getVelocityY() * -1);
                     ballValue.setVelocityX(6);
                     if (ballValue.getVelocityX() <= 0) {
                         ballValue.setVelocityX(-6);
@@ -243,21 +233,39 @@ public class EventHandler {
                         powerUp.setY(block.getY());
                         powerUp.setVisible(true);
                         blockPosX = block.getX() + block.getWidth() / 2;
-                        blockPosY = block.getY() + block.getHeight();
                     }
+
+                    //RIGHT SIDE
+                    //  if (ballValue.getX() <= block.getX() + block.getWidth() && ballValue.getVelocityX() < 0 && ballValue.getY() + ballValue.getHeight() < (block.getY() + block.getHeight()/* + ballValue.getHeight()*/)) {
+                    //     System.out.println("Right Collision - Ball: " + ballValue.getX() + " " + block.getX() + block.getWidth());
+                    //    ballValue.setX(block.getX() + block.getWidth() + 1);
+                    //  /*if (ballValue.getY() >= block.getHeight() / 2) {
+                    //    ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                    // }*/
+                    // ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                    // isSide = true;
+                    //LEFT SIDE
+                    // } else if (ballValue.getX() + ballValue.getWidth() >= block.getX() && ballValue.getX() + ballValue.getWidth() < 2 * block.getX() && ballValue.getVelocityX() > 0 && ballValue.getY() + ballValue.getHeight() <= (block.getY() + block.getHeight()/* + ballValue.getHeight()*/)) {
+                    //   System.out.println("Left Collision - Ball: " + ballValue.getX() + ballValue.getWidth() + " Block: " + block.getX());
+                    // ballValue.setX(block.getX() - 1);
+                    //  /*if (ballValue.getY() >= block.getHeight() / 2 && ballValue.getVelocityY() < 0) {
+                    //     ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                    //  } else if (ballValue.getY() >= block.getHeight() / 2 && ballValue.getVelocityY() > 0) {
+                    //      ballValue.setVelocityY(ballValue.getVelocityY());
+                    //  }*/
+                    // ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                    //isSide = true;
+                    // }
+
                     System.out.println("Score: " + player.getScore() + "\nBlock X: " + block.getX() + "\n--------------");
                     if (block.getLives() == 3) {
                         block.setLives(2);
                         block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-
-                        if (ballValue.getX() <= block.getX() + block.getWidth() && ballValue.getY() + ballValue.getHeight() / 2 < block.getY() + block.getHeight() /*|| ballValue.getX() + ballValue.getWidth() >= block.getX()*/) {
-                            ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
                             ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                            isSide = true;
-                            /*if (ballValue.getY() + ballValue.getHeight() <= block.getY() + block.getWidth() / 2) {
-                                ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                            }*/
+                        } else {
+                            ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
+                            ballValue.setVelocityX(ballValue.getVelocityX() * -1);
                         }
                         sound.playSoundEffect(Music.blockHitHealthy, false);
                         changeBall();
@@ -266,7 +274,12 @@ public class EventHandler {
                     if (block.getLives() == 2) {
                         block.setLives(1);
                         block.loadSourceImage(BlockState.BROKEN.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
+                            ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        } else {
+                            ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
+                            ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                        }
                         sound.playSoundEffect(Music.blockHitDamaged, false);
                         changeBall();
                         return;
@@ -274,7 +287,12 @@ public class EventHandler {
                     if (block.getLives() == 1) {
                         block.setLives(0);
                         block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
+                            ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        } else {
+                            ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
+                            ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                        }
                         sound.playSoundEffect(Music.blockHitBroken, false);
                         changeBall();
                         return;
@@ -327,13 +345,6 @@ public class EventHandler {
     private void printArray(int iterations) {
         for (int y = 0; y < blocks.get(0).getRows(); y++) {
             for (int x = 0; x < blocks.get(0).getColumns(); x++) {
-                colorAdjust.setHue(Utils.getRandomDoubleNumber(-1, 1));
-
-                blocks.get(iterations).getImageView().setEffect(colorAdjust);
-                blocks.get(iterations).getImageView().setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
-                blocks.get(iterations).getImageView().setY(y * blocks.get(iterations).getHeight());
-                blocks.get(iterations).getImageView().setImage(blocks.get(iterations).getImage());
-
                 blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
                 blocks.get(iterations).setY(y * blocks.get(iterations).getHeight());
                 if (blockLives >= 6 && level > 1) {
@@ -361,23 +372,30 @@ public class EventHandler {
 
         for (int y = 0; y < Level.LEVEL1.getLevel().length; y++) {
             for (int x = 0; x < Level.LEVEL1.getLevel().length; x++) {
-                setStaticLevelBlockState();
-                blocks.get(x).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(x).getWidth()));
-                blocks.get(y).setY(y * blocks.get(y).getHeight());
+                colorAdjust.setHue(Utils.getRandomDoubleNumber(-1, 1));
+
+                blocks.get(iterations).getImageView().setEffect(colorAdjust);
+                blocks.get(iterations).getImageView().setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(iterations).getWidth()));
+                blocks.get(iterations).getImageView().setY(y * blocks.get(iterations).getHeight());
+                blocks.get(iterations).getImageView().setImage(blocks.get(iterations).getImage());
+
+                blocks.get(iterations).setX((Settings.SCREEN_WIDTH / 4) + (x * blocks.get(x).getWidth()));
+                blocks.get(iterations).setY(y * blocks.get(y).getHeight());
                 iterations++;
             }
         }
+        setStaticLevelBlockState();
     }
 
     private void initStaticLevel() {
-        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
+        for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
             blocks.add(new Block(Level.LEVEL1.getLevel().length, Level.LEVEL1.getLevel().length));
         }
     }
 
     private void setStaticLevelBlockState() {
-        for (int i = 0; i < Level.LEVEL1.getLevel().length; i++) {
-            for (int j = 0; j < Level.LEVEL1.getLevel().length; j++) {
+        for (int i = 0; i < blocks.get(0).getRows(); i++) {
+            for (int j = 0; j < blocks.get(0).getColumns(); j++) {
                 if (Level.LEVEL1.getLevel()[i][j] == '_') {
                     blocks.get(i).setAlive(false);
                     blocks.get(i).loadSourceImage(BlockState.INVISIBLE.getImgSrc());
@@ -419,22 +437,26 @@ public class EventHandler {
             player.setLives(Settings.DEFAULT_PLAYER_LIVES);
 
             blocks.clear();
-            int ranX = Utils.getRandomIntegerNumber(3, 8);
-            int ranY = Utils.getRandomIntegerNumber(3, 8);
-            Settings.NUMBER_OF_BLOCKS = ranX * ranY;
-            blockLives = Settings.NUMBER_OF_BLOCKS;
+            if (!isStaticLevel) {
+                int ranX = Utils.getRandomIntegerNumber(3, 8);
+                int ranY = Utils.getRandomIntegerNumber(3, 8);
+                Settings.NUMBER_OF_BLOCKS = ranX * ranY;
+                blockLives = Settings.NUMBER_OF_BLOCKS;
 
-            initArray();
-            blocks.get(0).setColumns(ranY);
-            blocks.get(0).setRows(ranX);
+                initArray();
+                blocks.get(0).setColumns(ranY);
+                blocks.get(0).setRows(ranX);
 
-            for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
-                blocks.get(i).setLives(Settings.DEFAULT_BLOCK_LIVES);
-                blocks.get(i).setAlive(true);
-                blocks.get(i).loadSourceImage(Settings.DEFAULT_BLOCK_IMG);
+                for (int i = 0; i < Settings.NUMBER_OF_BLOCKS; i++) {
+                    blocks.get(i).setLives(Settings.DEFAULT_BLOCK_LIVES);
+                    blocks.get(i).setAlive(true);
+                    blocks.get(i).loadSourceImage(Settings.DEFAULT_BLOCK_IMG);
+                }
+
+                printArray(0);
+            } else {
+                printStaticLevel(0);
             }
-
-            printArray(0);
 
             reset = false;
         }
