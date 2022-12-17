@@ -276,7 +276,7 @@ public class GameView extends Application implements Initializable {
         if (isFrozen) {
             sideCollisionFreeze();
         } else {
-            platformAnim(); // FIXME: 17.12.2022 Broken bullshit
+            platformAnim();
         }
     }
 
