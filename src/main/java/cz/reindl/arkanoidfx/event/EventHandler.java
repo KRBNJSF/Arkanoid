@@ -180,6 +180,7 @@ public class EventHandler {
                     if (ballValue.getVelocityX() >= 0) {
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
                     }
+                    return;
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 2.5) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 5)) {
@@ -187,26 +188,28 @@ public class EventHandler {
                     if (ballValue.getVelocityX() >= 0) {
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
                     }
+                    return;
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.66) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 2.5)) {
                     ballValue.setVelocityX(new Random().nextInt(3) - 1);
+                    return;
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() / 1.25) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 1.66)) {
                     ballValue.setVelocityX(4);
                     if (ballValue.getVelocityX() <= 0) {
-                        ballValue.setVelocityX(-4);
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
                     }
+                    return;
                 }
 
                 if (ballValue.getBallRect() <= player.getPlayerRect(player.getWidth() + 5) && ballValue.getBallRect() > player.getPlayerRect(player.getWidth() / 1.25)) {
                     ballValue.setVelocityX(6);
                     if (ballValue.getVelocityX() <= 0) {
-                        ballValue.setVelocityX(-6);
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
                     }
+                    return;
                 }
 
             }
@@ -261,7 +264,7 @@ public class EventHandler {
                     if (block.getLives() == 3) {
                         block.setLives(2);
                         block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
-                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
+                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.05) {
                             ballValue.setVelocityY(ballValue.getVelocityY() * -1);
                         } else {
                             ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
