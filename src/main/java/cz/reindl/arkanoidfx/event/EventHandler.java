@@ -210,6 +210,8 @@ public class EventHandler {
                         ballValue.setVelocityX(ballValue.getVelocityX() * -1);
                     }
                     return;
+                } else {
+                    ballValue.setVelocityX(6);
                 }
 
             }
@@ -481,6 +483,8 @@ public class EventHandler {
 
         Robot robot = new Robot();
         robot.mouseMove(Settings.SCREEN_WIDTH / 2 - 50, Settings.SCREEN_HEIGHT / 2);
+
+        balls.get(0).setVelocityX(0);
     }
 
 }
