@@ -9,6 +9,7 @@ import cz.reindl.arkanoidfx.sound.Sound;
 import cz.reindl.arkanoidfx.utils.Interval;
 import cz.reindl.arkanoidfx.utils.Utils;
 import cz.reindl.arkanoidfx.view.GameView;
+import javafx.geometry.Point2D;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.robot.Robot;
 
@@ -118,7 +119,11 @@ public class EventHandler {
                 System.out.println("Random AI X: " + df.format(randomX));
                 isGenerated = true;
             }
-            player.setX(balls.get(0).getX() - (player.getWidth() / randomX));
+            if (balls.get(0).getVelocityY() < 0 && powerUp.isVisible()) {
+                player.setX(powerUp.getX() - (player.getWidth() / 2));
+            } else {
+                player.setX(balls.get(0).getX() - (player.getWidth() / randomX));
+            }
         }
     }
 
@@ -266,12 +271,16 @@ public class EventHandler {
                     if (block.getLives() == 3) {
                         block.setLives(2);
                         block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
-                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.05) {
+                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                        //setBallDirection(block, ballValue);
+                        /*
+                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
                             ballValue.setVelocityY(ballValue.getVelocityY() * -1);
                         } else {
                             ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
                             ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        }
+                        }*/
                         sound.playSoundEffect(Music.blockHitHealthy, false);
                         changeBall();
                         return;
@@ -279,12 +288,9 @@ public class EventHandler {
                     if (block.getLives() == 2) {
                         block.setLives(1);
                         block.loadSourceImage(BlockState.BROKEN.getImgSrc());
-                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
-                            ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        } else {
-                            ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
-                            ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        }
+                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                        //setBallDirection(block, ballValue);
                         sound.playSoundEffect(Music.blockHitDamaged, false);
                         changeBall();
                         return;
@@ -292,12 +298,9 @@ public class EventHandler {
                     if (block.getLives() == 1) {
                         block.setLives(0);
                         block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                        if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
-                            ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        } else {
-                            ballValue.setVelocityY(ballValue.getVelocityY() * Utils.getRandomArrayValue());
-                            ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        }
+                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+                        //setBallDirection(block, ballValue);
                         sound.playSoundEffect(Music.blockHitBroken, false);
                         changeBall();
                         return;
@@ -307,6 +310,27 @@ public class EventHandler {
             }
         }
 
+    }
+
+    private void setBallDirection(Block block, Ball ballValue) {
+        if (block.getRect().contains(new Point2D(ballValue.getX() + ballValue.getWidth() + 1, ballValue.getY()))) {
+            if (ballValue.getVelocityX() > 0) {
+                ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+            }
+        } else if (block.getRect().contains(new Point2D(ballValue.getX() - 1, ballValue.getY()))) {
+            if (ballValue.getVelocityX() < 0) {
+                ballValue.setVelocityX(ballValue.getVelocityX() * -1);
+            }
+        }
+        if (block.getRect().contains(new Point2D(ballValue.getX(), ballValue.getY() - 1))) {
+            if (ballValue.getVelocityY() < 0) {
+                ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+            }
+        } else if (block.getRect().contains(new Point2D(ballValue.getX(), ballValue.getY() + ballValue.getHeight() + 1))) {
+            if (ballValue.getVelocityY() > 0) {
+                ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+            }
+        }
     }
 
     public void checkBlockState() {
