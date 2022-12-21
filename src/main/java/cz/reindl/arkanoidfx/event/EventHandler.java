@@ -271,9 +271,9 @@ public class EventHandler {
                     if (block.getLives() == 3) {
                         block.setLives(2);
                         block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        //setBallDirection(block, ballValue);
+                        /*ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);*/
+                        setBallDirection(block, ballValue);
                         /*
                         if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
                             ballValue.setVelocityY(ballValue.getVelocityY() * -1);
@@ -288,9 +288,9 @@ public class EventHandler {
                     if (block.getLives() == 2) {
                         block.setLives(1);
                         block.loadSourceImage(BlockState.BROKEN.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        //setBallDirection(block, ballValue);
+                        /*ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);*/
+                        setBallDirection(block, ballValue);
                         sound.playSoundEffect(Music.blockHitDamaged, false);
                         changeBall();
                         return;
@@ -298,9 +298,9 @@ public class EventHandler {
                     if (block.getLives() == 1) {
                         block.setLives(0);
                         block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        //setBallDirection(block, ballValue);
+                        /*ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);*/
+                        setBallDirection(block, ballValue);
                         sound.playSoundEffect(Music.blockHitBroken, false);
                         changeBall();
                         return;

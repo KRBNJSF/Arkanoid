@@ -14,6 +14,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -42,6 +43,7 @@ public class GameView extends Application implements Initializable {
     StackPane root;
     Stage currentStage;
     Scene currentScene;
+    Image backgroundImg = new Image("backgroundtest.png");
 
     Font font = new Font("verdana", 40);
     Text scoreValueText = new Text("Score: ");
@@ -203,7 +205,7 @@ public class GameView extends Application implements Initializable {
 
     //BACKGROUND
     private void backgroundRender() {
-        // FIXME: 16.12.2022 gc.drawImage(backgroundImg, 0, 0);
+        //gc.drawImage(backgroundImg, 0, 0);
         gc.setFill(Color.BEIGE);
         gc.fillRect(0, 0, Settings.SCREEN_WIDTH, Settings.SCREEN_HEIGHT);
     }
