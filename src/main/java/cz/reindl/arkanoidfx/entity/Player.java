@@ -4,7 +4,7 @@ import javafx.scene.input.KeyEvent;
 
 import java.util.Random;
 
-public class Player extends GameObject {
+public class Player extends GameObject implements NonPlayable {
 
     private int score, lives, velocityX;
 
@@ -16,6 +16,7 @@ public class Player extends GameObject {
         initPlatformObjectImage();
     }
 
+    @Override
     public String getSkin(int bound) {
         skins[0] = "platform.png";
         skins[1] = "platformBetter.png";

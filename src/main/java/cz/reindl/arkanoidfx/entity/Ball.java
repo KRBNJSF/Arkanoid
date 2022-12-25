@@ -3,7 +3,7 @@ package cz.reindl.arkanoidfx.entity;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Ball extends GameObject {
+public class Ball extends GameObject implements NonPlayable {
 
     private int velocityX, velocityY;
     private ArrayList<Ball> balls;
@@ -21,6 +21,7 @@ public class Ball extends GameObject {
         getImageSize();
     }
 
+    @Override
     public String getSkin(int bound) {
         skins[0] = "ball.png";
         skins[1] = "ball2.png";
