@@ -119,53 +119,17 @@ public class EventHandler {
                 System.out.println("Random AI X: " + df.format(randomX));
                 isGenerated = true;
             }
-
-            int id = getLowestBallId();
-            if (powerUp.isVisible() && powerUp.getY() + powerUp.getHeight() >= player.getY() - 2 * powerUp.getHeight() && balls.get(id).getY() + balls.get(id).getHeight() < powerUp.getY()) {
+            if (balls.get(0).getVelocityY() < 0 && powerUp.isVisible()) {
                 player.setX(powerUp.getX() - (player.getWidth() / 2));
-            } else if (balls.get(getLowestBallId()).getVelocityY() > 0) {
-                player.setX(balls.get(id).getX() - (player.getWidth() / randomX));
             } else {
                 player.setX(balls.get(0).getX() - (player.getWidth() / randomX));
             }
-
-
-                    /*  else {
-                        //balls.get(0).getY() <= Settings.SCREEN_HEIGHT - (2 * (Settings.SCREEN_HEIGHT - player.getY()))
-                        player.setX(balls.get(0).getX() - (player.getWidth() / randomX));
-                    }*/
-
         }
-    }
-
-    private int getLowestBallId() {
-        int id = 0;
-        double lowest = 0;
-        double current;
-
-        for (int i = 0; i < balls.size(); i++) {
-            if (balls.get(i).getVelocityY() < 0) break;
-            current = balls.get(i).getY() + balls.get(i).getHeight();
-            if (current > lowest) {
-                id = i;
-            }
-
-       /*
-       double lowest = Double.MAX_VALUE;
-       double current = (player.getY() - (balls.get(i).getY() + balls.get(i).getHeight()));
-            if (current < lowest) {
-                lowest = current;
-                id = i;
-            }
-            */
-
-        }
-        return id;
     }
 
     //BALL MOVEMENT + BALL UTILITIES
     public void moveBall() {
-        for (int i = balls.size() - 1; i >= 0; i--) {
+        for (int i = 0; i < balls.size(); i++) {
             if (balls.get(i).getY() >= Settings.SCREEN_HEIGHT && player.getLives() <= 0) {
                 sound.playSoundEffect(Music.gameLoseSound, false);
                 reset = true;
@@ -181,25 +145,24 @@ public class EventHandler {
                 }
                 return;
             }
-            if (balls.size() >= 1) {
-                if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
-                    balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
-                    sound.playSoundEffect(Music.wallHit, false);
-                }
-                if (balls.get(i).getX() <= 0) {   //Settings.BOUND_WIDTH for bg image
-                    balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
-                    sound.playSoundEffect(Music.wallHit, false);
-                }
-                if (balls.get(i).getY() <= 0) {   //Settings.BOUND_WIDTH for bg image
-                    balls.get(i).setY(10);        //(Settings.BOUND_WIDTH + 5) for bg image
-                    balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
-                    sound.playSoundEffect(Music.wallHit, false);
-                } else {
-                    balls.get(i).setVelocityX(balls.get(i).getVelocityX());
-                }
-                balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
-                balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
+            //if (ballCount >= 0) {
+            if (balls.get(i).getX() + balls.get(i).getWidth() >= Settings.SCREEN_WIDTH) {
+                balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                sound.playSoundEffect(Music.wallHit, false);
             }
+            if (balls.get(i).getX() <= 0) {   //Settings.BOUND_WIDTH for bg image
+                balls.get(i).setVelocityX(balls.get(i).getVelocityX() * -1);
+                sound.playSoundEffect(Music.wallHit, false);
+            }
+            if (balls.get(i).getY() <= 0) {   //Settings.BOUND_WIDTH for bg image
+                balls.get(i).setY(10);        //(Settings.BOUND_WIDTH + 5) for bg image
+                balls.get(i).setVelocityY(balls.get(i).getVelocityY() * -1);
+                sound.playSoundEffect(Music.wallHit, false);
+            } else {
+                balls.get(i).setVelocityX(balls.get(i).getVelocityX());
+            }
+            balls.get(i).setX(balls.get(i).getX() + balls.get(i).getVelocityX());
+            balls.get(i).setY(balls.get(i).getY() + balls.get(i).getVelocityY());
         }
     }
 
@@ -308,13 +271,9 @@ public class EventHandler {
                     if (block.getLives() == 3) {
                         block.setLives(2);
                         block.loadSourceImage(BlockState.DAMAGED.getImgSrc());
-                        if (block.getRect().contains(ballValue.getX(), ballValue.getY() - 1)) {
-                            if (block.getRect().contains(ballValue.getX() - 1, ballValue.getY() - 1) && ballValue.getVelocityX() < 0) {
-                                ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                            }
-                            ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        }
-                        //setBallDirection(block, ballValue);
+                        /*ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);*/
+                        setBallDirection(block, ballValue);
                         /*
                         if (ballValue.getY() <= block.getY() + block.getHeight() && ballValue.getY() > block.getY() + block.getHeight() / 1.1) {
                             ballValue.setVelocityY(ballValue.getVelocityY() * -1);
@@ -329,9 +288,9 @@ public class EventHandler {
                     if (block.getLives() == 2) {
                         block.setLives(1);
                         block.loadSourceImage(BlockState.BROKEN.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        //setBallDirection(block, ballValue);
+                        /*ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);*/
+                        setBallDirection(block, ballValue);
                         sound.playSoundEffect(Music.blockHitDamaged, false);
                         changeBall();
                         return;
@@ -339,9 +298,9 @@ public class EventHandler {
                     if (block.getLives() == 1) {
                         block.setLives(0);
                         block.loadSourceImage(BlockState.INVISIBLE.getImgSrc());
-                        ballValue.setVelocityY(ballValue.getVelocityY() * -1);
-                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);
-                        //setBallDirection(block, ballValue);
+                        /*ballValue.setVelocityY(ballValue.getVelocityY() * -1);
+                        ballValue.setVelocityX(ballValue.getVelocityX() * -1);*/
+                        setBallDirection(block, ballValue);
                         sound.playSoundEffect(Music.blockHitBroken, false);
                         changeBall();
                         return;
