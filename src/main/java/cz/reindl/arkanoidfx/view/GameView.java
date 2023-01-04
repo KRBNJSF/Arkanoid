@@ -197,6 +197,7 @@ public class GameView extends Application implements Initializable {
             gc.strokeText("PAUSED", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2);
         }
 
+        aiPlayer();
         scoreText();
         winText();
         checkEvent();
@@ -270,6 +271,12 @@ public class GameView extends Application implements Initializable {
             gc.strokeText(String.valueOf("Lives: " + handler.player.getLives()) + "\n Level: " + handler.level, Settings.SCREEN_WIDTH - 100, 60);
         }
         gc.strokeText(scoreValueText.getText() + String.valueOf(handler.player.getScore()), 70, 60);
+    }
+
+    private void aiPlayer() {
+        if (handler.isAi) {
+            gc.strokeText("Koci ADI is playing\nIQ: 67", Settings.SCREEN_WIDTH / 2, Settings.SCREEN_HEIGHT / 2 + 60);
+        }
     }
 
     //OTHERS
